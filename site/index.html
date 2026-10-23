@@ -1,0 +1,1174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d6b72">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MCAT">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>
+:root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; font: 14px/1.4 system-ui, sans-serif; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+<title>MCAT Study Log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a test-day countdown band, a phase timeline, then four tabbed workspaces (overview, log, scores, topics) in one column. */
+:root {
+  --bg: #f3f6f7; --surface: #ffffff; --ink: #13212a; --muted: #5a6a75; --line: #d9e1e6; --cell: #e7edf0;
+  --accent: #0d6b72; --accent-ink: #ffffff; --warn: #b4521a; --good: #2b8a50;
+  --cp: #3a68d4; --cars: #c2860f; --bb: #2c9157; --ps: #8656c4; --fl: #4b5963;
+  --f-display: "Schibsted Grotesk", "Segoe UI", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0e151a; --surface: #162028; --ink: #e5edf1; --muted: #92a3ae; --line: #25333d; --cell: #1e2a33;
+  --accent: #4bb3ba; --accent-ink: #062226; --warn: #e88a52; --good: #5cc27f;
+  --cp: #7598ec; --cars: #e0aa3e; --bb: #5cc085; --ps: #ad87e6; --fl: #9aa9b3; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0e151a; --surface: #162028; --ink: #e5edf1; --muted: #92a3ae; --line: #25333d; --cell: #1e2a33;
+  --accent: #4bb3ba; --accent-ink: #062226; --warn: #e88a52; --good: #5cc27f;
+  --cp: #7598ec; --cars: #e0aa3e; --bb: #5cc085; --ps: #ad87e6; --fl: #9aa9b3; color-scheme: dark }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--f-body); }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 64px; display: grid; gap: 22px; }
+h1, h2, h3 { font-family: var(--f-display); margin: 0; text-wrap: balance; }
+.mono, .num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.label { font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Countdown band */
+.top { display: flex; flex-wrap: wrap; gap: 18px 28px; align-items: end; justify-content: space-between; }
+.top h1 { font-size: clamp(26px, 4.4vw, 38px); font-weight: 800; letter-spacing: -.02em; }
+.top .sub { color: var(--muted); margin-top: 4px; }
+.count { display: flex; align-items: baseline; gap: 10px; }
+.count .big { font-family: var(--f-display); font-weight: 800; font-size: clamp(48px, 9vw, 76px); line-height: .9; letter-spacing: -.04em; color: var(--accent); font-variant-numeric: tabular-nums; }
+.count .unit { color: var(--muted); font-size: 14px; line-height: 1.3; }
+
+/* Phase timeline */
+.timeline { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 14px; display: grid; gap: 10px; }
+.tl-bar { position: relative; display: flex; height: 30px; border-radius: 6px; overflow: hidden; }
+.tl-seg { position: relative; display: flex; align-items: center; padding: 0 8px; font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); background: color-mix(in srgb, var(--accent) var(--mix), var(--cell)); }
+.tl-seg + .tl-seg { border-left: 2px solid var(--surface); }
+.tl-today { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--ink); }
+.tl-today::after { content: ""; position: absolute; top: -3px; left: -4px; width: 10px; height: 10px; border-radius: 50%; background: var(--ink); }
+.tl-event { position: absolute; top: 0; bottom: 0; background: repeating-linear-gradient(135deg, var(--ps) 0 3px, transparent 3px 6px); opacity: .8; }
+.tl-key { display: inline-flex; align-items: center; gap: 6px; }
+.tl-key-sw { width: 14px; height: 10px; border-radius: 2px; background: repeating-linear-gradient(135deg, var(--ps) 0 3px, transparent 3px 6px); }
+.heat .cell.event { outline: 2px dashed var(--ps); outline-offset: -1px; }
+.phase-head { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; padding-top: 10px; }
+.pill.event { background: var(--ps); color: var(--surface); }
+.tl-ends { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--muted); gap: 12px; }
+.tl-now { font-size: 14px; }
+.tl-now b { font-weight: 600; }
+
+/* Tabs */
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.tab { background: none; border: 0; padding: 10px 14px; cursor: pointer; color: var(--muted); font-weight: 600; border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.tab:hover { color: var(--ink); }
+.panel { display: grid; gap: 22px; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 14px; min-width: 0; }
+.card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.card-head h2 { font-size: 17px; font-weight: 700; }
+.hint { color: var(--muted); font-size: 13px; }
+
+/* Stat row */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 4px; align-content: start; }
+.stat .v { font-family: var(--f-display); font-size: 30px; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.stat .v small { font-size: 15px; font-weight: 600; color: var(--muted); letter-spacing: 0; }
+.stat .d { font-size: 12.5px; color: var(--muted); }
+.meter { height: 6px; border-radius: 3px; background: var(--cell); overflow: hidden; margin-top: 6px; }
+.meter i { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
+
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+@media (max-width: 760px) { .two { grid-template-columns: 1fr; } }
+
+/* Section bars */
+.secbars { display: grid; gap: 10px; }
+.secrow { display: grid; grid-template-columns: 74px 1fr 64px; align-items: center; gap: 10px; font-size: 13.5px; }
+.secrow .track { height: 10px; background: var(--cell); border-radius: 5px; overflow: hidden; }
+.secrow .track i { display: block; height: 100%; border-radius: 5px; }
+.secrow .num { text-align: right; color: var(--muted); font-size: 13px; }
+
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 2px 9px 2px 7px; border-radius: 999px; background: color-mix(in srgb, var(--c) 14%, var(--surface)); color: var(--ink); white-space: nowrap; }
+.chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+
+/* Heatmap */
+.heat-scroll { overflow-x: auto; padding-bottom: 4px; }
+.heat { display: grid; grid-auto-flow: column; grid-template-rows: 16px repeat(7, 13px); gap: 3px; width: max-content; }
+.heat .cell { width: 13px; height: 13px; border-radius: 3px; background: var(--cell); }
+.heat .cell.out { background: transparent; }
+.heat .cell.exam { outline: 2px solid var(--warn); outline-offset: -1px; }
+.heat .cell.today { outline: 2px solid var(--ink); outline-offset: -1px; }
+.heat .mo { font-size: 10.5px; color: var(--muted); white-space: nowrap; width: 13px; overflow: visible; }
+.heat .dl { font-size: 10px; color: var(--muted); width: 22px; line-height: 13px; }
+.legend { display: flex; gap: 4px; align-items: center; font-size: 12px; color: var(--muted); }
+.legend span.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+svg text { fill: var(--muted); font-family: var(--f-mono); font-size: 11px; }
+
+/* Forms */
+form.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.field { display: grid; gap: 5px; min-width: 0; }
+.field.wide { grid-column: 1 / -1; }
+input, select, textarea { background: var(--bg); border: 1px solid var(--line); border-radius: 7px; padding: 8px 10px; width: 100%; min-width: 0; }
+textarea { resize: vertical; min-height: 60px; }
+.btn { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 7px; padding: 9px 16px; font-weight: 600; cursor: pointer; }
+.btn:hover { filter: brightness(1.08); }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.btn.small { padding: 5px 10px; font-size: 13px; }
+.actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; grid-column: 1 / -1; }
+.msg { font-size: 13px; color: var(--muted); }
+.msg.err { color: var(--warn); }
+
+/* Lists */
+.daygroup { display: grid; gap: 6px; }
+.daygroup + .daygroup { border-top: 1px solid var(--line); padding-top: 12px; }
+.dayhead { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); }
+.dayhead b { color: var(--ink); font-weight: 600; }
+.entry { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 12px; align-items: center; }
+.entry .what { min-width: 0; font-size: 14px; }
+.entry .what .note { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+.entry .dur { font-family: var(--f-mono); font-size: 13.5px; text-align: right; }
+.entry .del { grid-column: 3; justify-self: end; }
+.linkbtn { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 12.5px; padding: 2px 4px; text-decoration: underline; text-underline-offset: 2px; }
+.linkbtn.confirm { color: var(--warn); font-weight: 600; }
+.empty { border: 1px dashed var(--line); border-radius: 8px; padding: 18px; color: var(--muted); font-size: 14px; text-align: center; }
+
+/* Scores */
+.score-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.score-table th { text-align: left; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.score-table td { padding: 9px 8px; border-bottom: 1px solid var(--line); font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.score-table td.name { font-family: var(--f-body); }
+.score-table td.tot { font-weight: 600; }
+.table-scroll { overflow-x: auto; }
+
+/* Topics */
+.topic-sec { display: grid; gap: 8px; }
+.topic-sec h3 { font-size: 15px; display: flex; gap: 10px; align-items: center; justify-content: space-between; }
+.topics { display: grid; gap: 6px; }
+.topic { display: grid; grid-template-columns: 22px 44px 1fr; gap: 10px; align-items: center; text-align: left; background: var(--bg); border: 1px solid var(--line); border-radius: 7px; padding: 7px 10px; cursor: pointer; font-size: 14px; }
+.topic .code { font-family: var(--f-mono); font-size: 12.5px; color: var(--muted); }
+.bubble { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--muted); position: relative; }
+.topic[data-s="1"] .bubble { border-color: var(--accent); background: linear-gradient(90deg, var(--accent) 50%, transparent 50%); }
+.topic[data-s="2"] .bubble { border-color: var(--accent); background: var(--accent); }
+.topic[data-s="2"] .t { color: var(--muted); }
+
+/* Plan */
+.weeks { display: grid; gap: 12px; }
+.week { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 10px; background: var(--surface); }
+.week.current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.week-head { display: flex; justify-content: space-between; align-items: start; gap: 8px 16px; flex-wrap: wrap; }
+.week-head h3 { font-size: 16px; font-weight: 700; }
+.week-head .when { font-size: 12.5px; color: var(--muted); }
+.week-hrs { display: grid; gap: 4px; min-width: 150px; text-align: right; font-size: 13px; }
+.week-hrs .meter { margin-top: 0; }
+.pill { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); margin-left: 8px; vertical-align: 2px; }
+.pill.light { background: var(--cell); color: var(--muted); }
+.items { display: grid; gap: 6px; }
+.item { display: grid; grid-template-columns: 20px 62px 1fr; gap: 10px; align-items: start; text-align: left; background: var(--bg); border: 1px solid var(--line); border-radius: 7px; padding: 8px 10px; cursor: pointer; font-size: 14px; }
+.item .box { width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--muted); margin-top: 1px; display: grid; place-items: center; }
+.item[data-done="true"] .box { background: var(--accent); border-color: var(--accent); }
+.item[data-done="true"] .box::after { content: ""; width: 5px; height: 9px; border: solid var(--accent-ink); border-width: 0 2px 2px 0; transform: rotate(45deg) translate(-1px, -1px); }
+.item[data-done="true"] .txt { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line); }
+.item .kind { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--c); padding-top: 2px; }
+.item .txt { min-width: 0; overflow-wrap: anywhere; }
+.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; font-size: 13.5px; }
+.rules div { display: grid; gap: 3px; }
+.rules b { font-weight: 600; }
+
+.save-note { font-size: 12.5px; color: var(--muted); text-align: right; }
+@media (prefers-reduced-motion: no-preference) { .meter i, .secrow .track i { transition: width .4s ease; } }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="label">MCAT · Test day Friday, May 7, 2027</div>
+      <h1>MCAT Study Log</h1>
+      <div class="sub" id="subline">Study plan runs Saturday, Oct 24, 2026 to test day.</div>
+    </div>
+    <div class="count" aria-live="polite">
+      <span class="big" id="daysLeft">—</span>
+      <span class="unit" id="daysUnit">days until<br>test day</span>
+    </div>
+  </header>
+
+  <section class="timeline" aria-label="Study phases">
+    <div class="tl-now" id="phaseNow"></div>
+    <div class="tl-bar" id="tlBar"></div>
+    <div class="tl-ends"><span>Oct 24</span><span class="tl-key"><span class="tl-key-sw"></span>Cheer nationals, Apr 6–11</span><span>May 7</span></div>
+  </section>
+
+  <section class="card" id="authCard" hidden>
+    <div class="card-head"><h2>Sign in to sync</h2><span class="hint">Your study log syncs between your phone and laptop</span></div>
+    <form class="grid" id="authForm">
+      <div class="field"><label class="label" for="authEmail">Email</label><input id="authEmail" type="email" autocomplete="email" required></div>
+      <div class="field"><label class="label" for="authPass">Password</label><input id="authPass" type="password" autocomplete="current-password" minlength="8" required></div>
+      <div class="actions"><button class="btn" type="submit">Sign in</button><button class="btn ghost" type="button" id="authCreate">Create account</button><span class="msg" id="authMsg"></span></div>
+    </form>
+  </section>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-overview" data-tab="overview" aria-selected="true">Overview</button>
+    <button class="tab" role="tab" id="tab-plan" data-tab="plan" aria-selected="false">Content plan</button>
+    <button class="tab" role="tab" id="tab-log" data-tab="log" aria-selected="false">Log study</button>
+    <button class="tab" role="tab" id="tab-scores" data-tab="scores" aria-selected="false">Practice tests</button>
+    <button class="tab" role="tab" id="tab-topics" data-tab="topics" aria-selected="false">Content topics</button>
+  </nav>
+
+  <!-- OVERVIEW -->
+  <section class="panel" id="panel-overview" role="tabpanel">
+    <div class="stats">
+      <div class="stat"><span class="label">Total studied</span><span class="v" id="sTotal">0<small> h</small></span><span class="d" id="sTotalD">No sessions yet</span></div>
+      <div class="stat"><span class="label">This week</span><span class="v" id="sWeek">0<small> / 15 h</small></span><div class="meter"><i id="sWeekBar" style="width:0%"></i></div></div>
+      <div class="stat"><span class="label">Streak</span><span class="v" id="sStreak">0<small> days</small></span><span class="d" id="sStreakD">Log a session to start one</span></div>
+      <div class="stat"><span class="label">Question accuracy</span><span class="v" id="sAcc">—</span><span class="d" id="sAccD">From logged question sets</span></div>
+      <div class="stat"><span class="label">Latest practice test</span><span class="v" id="sFL">—</span><span class="d" id="sFLD">Target 515</span></div>
+    </div>
+
+    <div id="thisWeek"></div>
+
+    <div class="card">
+      <div class="card-head"><h2>Every study day, Oct 24 to May 7</h2>
+        <div class="legend">Less <span class="sw" style="background:var(--cell)"></span><span class="sw" data-l="1"></span><span class="sw" data-l="2"></span><span class="sw" data-l="3"></span><span class="sw" data-l="4"></span> More</div>
+      </div>
+      <div class="heat-scroll"><div class="heat" id="heat"></div></div>
+      <div class="hint">Darker squares mean more hours. The orange outline is test day; the dashed purple outlines are cheer nationals.</div>
+    </div>
+
+    <div class="two">
+      <div class="card">
+        <div class="card-head"><h2>Hours by week</h2><span class="hint">Orange marks are each week's target</span></div>
+        <div id="weekChart"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Hours by section</h2><span class="hint">All time</span></div>
+        <div class="secbars" id="secBars"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>Goals</h2><span class="hint">Change these any time</span></div>
+      <form class="grid" id="goalForm">
+        <div class="field"><label class="label" for="gWeekly">Weekly hours goal</label><input id="gWeekly" type="number" min="1" max="80" step="1" value="15"></div>
+        <div class="field"><label class="label" for="gTarget">Target score (472–528)</label><input id="gTarget" type="number" min="472" max="528" step="1" value="515"></div>
+        <div class="actions"><button class="btn" type="submit">Save goals</button><span class="msg" id="goalMsg"></span></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- PLAN -->
+  <section class="panel" id="panel-plan" role="tabpanel" hidden>
+    <div class="card">
+      <div class="card-head"><h2>Study plan, Oct 24 to May 7</h2><span class="hint" id="planHint"></span></div>
+      <div class="hint">Content review runs to Jan 17. Hours start at 8 a week and build to 26 by January. Thanksgiving, the holidays, and cheer nationals are lighter. Bars show planned hours; the filled part is what you've logged.</div>
+      <div id="rampChart"></div>
+      <div class="rules">
+        <div><b>Finish a unit, then do its QBank set</b><span class="hint">Each UWorld unit ends with a QBank Practice set. Do it within a day of the unit's last chapter, including the Behavioral Sciences units.</span></div>
+        <div><b>UWorld QBank: a third now, the rest timed later</b><span class="hint">Content review uses about a third of each unit, in tutor mode, with "unused" selected. From late January it's timed mixed blocks of 30, finished by April 30. That covers about 1,750 of your 2,545 science questions. The AAMC packs matter more than the remainder.</span></div>
+        <div><b>CARS most days</b><span class="hint">Use the UWorld CARS QBank for daily passages through January. Save the AAMC CARS Diagnostic and both CARS packs for February. Review every answer choice.</span></div>
+        <div><b>Anki every day</b><span class="hint">15 to 30 minutes. Make cards from every QBank question you miss. Lighter weeks are for clearing the backlog.</span></div>
+      </div>
+    </div>
+    <div class="weeks" id="weeks"></div>
+  </section>
+
+  <!-- LOG -->
+  <section class="panel" id="panel-log" role="tabpanel" hidden>
+    <div class="card">
+      <div class="card-head"><h2>Add a study session</h2><span class="hint">Questions and correct are optional</span></div>
+      <form class="grid" id="logForm">
+        <div class="field"><label class="label" for="lDate">Date</label><input id="lDate" type="date" required></div>
+        <div class="field"><label class="label" for="lSection">Section</label>
+          <select id="lSection"></select></div>
+        <div class="field"><label class="label" for="lKind">Activity</label>
+          <select id="lKind">
+            <option>Content review</option><option>Anki / flashcards</option><option>Question bank</option>
+            <option>Practice passages</option><option>Full-length exam</option><option>Exam review</option><option>Other</option>
+          </select></div>
+        <div class="field"><label class="label" for="lHours">Hours</label><input id="lHours" type="number" min="0" max="16" step="1" value="1"></div>
+        <div class="field"><label class="label" for="lMins">Minutes</label><input id="lMins" type="number" min="0" max="59" step="5" value="0"></div>
+        <div class="field"><label class="label" for="lQ">Questions</label><input id="lQ" type="number" min="0" step="1" placeholder="e.g. 40"></div>
+        <div class="field"><label class="label" for="lC">Correct</label><input id="lC" type="number" min="0" step="1" placeholder="e.g. 31"></div>
+        <div class="field wide"><label class="label" for="lNotes">Notes</label><textarea id="lNotes" placeholder="What did you cover? Anything to revisit?"></textarea></div>
+        <div class="actions"><button class="btn" type="submit">Add session</button><span class="msg" id="logMsg"></span></div>
+      </form>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Session history</h2><span class="hint" id="histHint"></span></div>
+      <div id="history"></div>
+    </div>
+  </section>
+
+  <!-- SCORES -->
+  <section class="panel" id="panel-scores" role="tabpanel" hidden>
+    <div class="card">
+      <div class="card-head"><h2>Score trend</h2><span class="hint" id="trendHint">Scale 472–528</span></div>
+      <div id="scoreChart"></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Add a practice test</h2><span class="hint">Each section is scored 118–132</span></div>
+      <form class="grid" id="examForm">
+        <div class="field"><label class="label" for="eName">Test name</label><input id="eName" type="text" placeholder="AAMC FL 1" required></div>
+        <div class="field"><label class="label" for="eDate">Date</label><input id="eDate" type="date" required></div>
+        <div class="field"><label class="label" for="eCP">Chem/Phys</label><input id="eCP" type="number" min="118" max="132" required></div>
+        <div class="field"><label class="label" for="eCARS">CARS</label><input id="eCARS" type="number" min="118" max="132" required></div>
+        <div class="field"><label class="label" for="eBB">Bio/Biochem</label><input id="eBB" type="number" min="118" max="132" required></div>
+        <div class="field"><label class="label" for="ePS">Psych/Soc</label><input id="ePS" type="number" min="118" max="132" required></div>
+        <div class="actions"><button class="btn" type="submit">Add test</button><span class="msg" id="examMsg"></span></div>
+      </form>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>All practice tests</h2></div>
+      <div id="examList"></div>
+    </div>
+  </section>
+
+  <!-- TOPICS -->
+  <section class="panel" id="panel-topics" role="tabpanel" hidden>
+    <div class="card">
+      <div class="card-head"><h2>AAMC content categories</h2><span class="hint" id="topicHint"></span></div>
+      <div class="hint">Tap a topic to move it from not started, to in review (half bubble), to done (full bubble).</div>
+      <div id="topicList" style="display:grid;gap:22px"></div>
+    </div>
+  </section>
+
+  <div class="save-note"><span id="saveNote">Loading your data…</span> <button class="linkbtn" type="button" id="signOut" hidden>Sign out</button></div>
+</div>
+
+<script>
+(() => {
+  const START = "2026-10-24", EXAM = "2027-05-07";
+  const SECTIONS = [
+    { id: "cp", name: "Chem/Phys", short: "C/P" },
+    { id: "cars", name: "CARS", short: "CARS" },
+    { id: "bb", name: "Bio/Biochem", short: "B/B" },
+    { id: "ps", name: "Psych/Soc", short: "P/S" },
+    { id: "fl", name: "Full-length / mixed", short: "Mixed" },
+  ];
+  const SEC = Object.fromEntries(SECTIONS.map(s => [s.id, s]));
+  const PHASES = [
+    { name: "Content review", from: "2026-10-24", to: "2027-01-17", mix: "22%", tip: "Work through every UWorld book once, with each unit's QBank set and daily Anki." },
+    { name: "Practice", from: "2027-01-18", to: "2027-03-07", mix: "40%", tip: "Timed mixed QBank blocks, CARS most days, and a full-length every other week." },
+    { name: "Full-lengths", from: "2027-03-08", to: "2027-05-02", mix: "60%", tip: "AAMC full-lengths every other Saturday, with a lighter stretch around cheer nationals (Apr 6–11)." },
+    { name: "Taper", from: "2027-05-03", to: "2027-05-07", mix: "80%", tip: "Light review, sleep schedule, logistics. Rest the day before." },
+  ];
+  const EVENTS = [{ name: "Cheer nationals", from: "2027-04-06", to: "2027-04-11" }];
+  const eventOn = k => EVENTS.find(e => k >= e.from && k <= e.to);
+  const TOPICS = {
+    cp: [["4A","Translational motion, forces, work, energy, equilibrium"],["4B","Fluids and gas movement"],["4C","Electrochemistry and electrical circuits"],["4D","Light and sound"],["4E","Atoms, nuclear decay, electronic structure"],["5A","Water and solutions"],["5B","Molecular structure and intermolecular forces"],["5C","Separation and purification methods"],["5D","Structure and reactivity of biological molecules"],["5E","Thermodynamics and kinetics"]],
+    cars: [["CR1","Foundations of comprehension"],["CR2","Reasoning within the text"],["CR3","Reasoning beyond the text"]],
+    bb: [["1A","Proteins, amino acids, enzymes"],["1B","Gene expression and transmission"],["1C","Heredity and genetic diversity"],["1D","Bioenergetics and metabolism"],["2A","Cell structure and assemblies"],["2B","Prokaryotes and viruses"],["2C","Cell division, differentiation, specialization"],["3A","Nervous and endocrine systems"],["3B","Organ systems"]],
+    ps: [["6A","Sensing the environment"],["6B","Making sense of the environment"],["6C","Responding to the world"],["7A","Individual influences on behavior"],["7B","Social processes and behavior"],["7C","Attitude and behavior change"],["8A","Self-identity"],["8B","Social thinking"],["8C","Social interactions"],["9A","Social structures"],["9B","Demographics"],["10A","Social inequality"]],
+  };
+
+  // Study plan built from the UWorld book chapters: [section, kind, task].
+  // Content review ends Jan 17; hours ramp up week by week; holidays and cheer nationals are lighter.
+  const PLAN = [
+    { from: "2026-10-24", to: "2026-10-25", hours: 3, title: "Kickoff weekend", items: [
+      ["fl", "Setup", "Open the QBank, build one 10-question tutor block to learn the screens, and set up Anki"],
+      ["bb", "Read", "Biochemistry Ch 2: Peptides and Proteins (Ch 1 is already done)"],
+      ["cars", "Read", "CARS Ch 3: How to Study for CARS"]] },
+    { from: "2026-10-26", to: "2026-11-01", hours: 8, title: "Proteins", items: [
+      ["bb", "Read", "Biochemistry Ch 3: Nonenzymatic Protein Activity"],
+      ["bb", "QBank", "Biochemistry Unit 1 QBank: 45 of 187 questions, tutor mode"],
+      ["ps", "Read", "Behavioral Sciences Ch 4–5: Nervous and Endocrine Systems, Heredity and the Environment (Unit 1 is already done)"],
+      ["cars", "Read", "CARS Ch 4: Approaching CARS Passages and Questions"],
+      ["cars", "CARS", "3 UWorld CARS passages, untimed"],
+      ["fl", "Anki", "15 min a day. Make cards from every missed question"]] },
+    { from: "2026-11-02", to: "2026-11-08", hours: 10, title: "Enzymes", items: [
+      ["bb", "Read", "Biochemistry Ch 4–5: Enzyme Activity, Enzyme Kinetics"],
+      ["ps", "Read", "Behavioral Sciences Ch 6–7: Human Physiological Development, Studying the Brain"],
+      ["ps", "QBank", "Behavioral Sciences Unit 2 QBank: both questions"],
+      ["cars", "Read", "CARS Ch 5–6: Foundations of Comprehension, Reasoning Within the Text"],
+      ["cars", "CARS", "3 UWorld CARS passages, untimed"]] },
+    { from: "2026-11-09", to: "2026-11-15", hours: 12, title: "Enzyme regulation and atoms", items: [
+      ["bb", "Read", "Biochemistry Ch 6: Enzyme Regulation"],
+      ["bb", "QBank", "Biochemistry Unit 2 QBank: 40 of 120 questions"],
+      ["cp", "Read", "General Chemistry Ch 1: Structure and Properties of Atoms"],
+      ["cp", "QBank", "General Chemistry Unit 1 QBank: 40 of 113 questions"],
+      ["ps", "Read", "Behavioral Sciences Ch 8–10: Sensation, Perception, Vision"],
+      ["cars", "Read", "CARS Ch 7–8: Reasoning Beyond the Text, Final Thoughts"],
+      ["cars", "CARS", "4 UWorld CARS passages. Time one set of 3 (about 30 min)"]] },
+    { from: "2026-11-16", to: "2026-11-22", hours: 15, title: "Biomolecules and bonding", items: [
+      ["bb", "Read", "Biochemistry Ch 7–9: Carbohydrates, Nucleotides and Nucleic Acids, Lipids"],
+      ["bb", "QBank", "Biochemistry Unit 3 QBank: 30 of 84 questions"],
+      ["cp", "Read", "General Chemistry Ch 2: Chemical Bonding, Reactions, and Stoichiometry"],
+      ["cp", "QBank", "General Chemistry Unit 2 QBank: 35 of 110 questions"],
+      ["ps", "Read", "Behavioral Sciences Ch 11–14: Hearing, Other Senses, Consciousness and Sleep, Consciousness-altering Substances"],
+      ["ps", "QBank", "Behavioral Sciences Unit 3 QBank: 15 of 47 questions"],
+      ["cars", "CARS", "4 UWorld CARS passages, timed"]] },
+    { from: "2026-11-23", to: "2026-11-29", hours: 12, title: "Thanksgiving week", light: true, items: [
+      ["bb", "Read", "Biochemistry Ch 10–11: Catabolism and Anabolism, Carbohydrate Metabolism"],
+      ["cp", "Read", "General Chemistry Ch 3–4: Thermodynamics, Kinetics"],
+      ["ps", "Read", "Behavioral Sciences Ch 15–18: Attention; Non-associative, Associative, and Observational Learning"],
+      ["fl", "Anki", "Clear your Anki backlog"],
+      ["cars", "CARS", "3 UWorld CARS passages"]] },
+    { from: "2026-11-30", to: "2026-12-06", hours: 18, title: "Finish biochem", items: [
+      ["bb", "Read", "Biochemistry Ch 12–14: Aerobic Respiration, Noncarbohydrate Metabolism, Biomolecule Purification"],
+      ["bb", "QBank", "Biochemistry QBank: 45 of 135 from Unit 4, all 7 from Unit 5"],
+      ["cp", "Read", "General Chemistry Ch 5–6: Chemical Equilibrium, Gas Laws"],
+      ["cp", "QBank", "General Chemistry Unit 3 QBank: 40 of 122 questions"],
+      ["ps", "Read", "Behavioral Sciences Ch 19–22: Memory, Cognition, Problem-Solving, Language"],
+      ["ps", "QBank", "Behavioral Sciences Unit 4 QBank: 25 of 77 questions"],
+      ["cars", "CARS", "4 UWorld CARS passages, timed"]] },
+    { from: "2026-12-07", to: "2026-12-13", hours: 20, title: "Finish gen chem, start bio and physics", items: [
+      ["cp", "Read", "General Chemistry Ch 7–9: Solutions, Acid-Base Chemistry, Redox and Electrochemistry"],
+      ["cp", "QBank", "General Chemistry Unit 4 QBank: 45 of 141 questions"],
+      ["bb", "Read", "Biology Ch 1–2: DNA Structure, Synthesis, and Repair; Gene Expression"],
+      ["bb", "QBank", "Biology Unit 1 QBank: 25 of 70 questions"],
+      ["cp", "Read", "Physics Ch 1: Motion, Force, and Energy"],
+      ["cp", "QBank", "Physics Unit 1 QBank: 25 of 77 questions"],
+      ["ps", "Read", "Behavioral Sciences Ch 23–25: Motivation, Emotion, Attitudes"],
+      ["cars", "CARS", "5 UWorld CARS passages, timed"]] },
+    { from: "2026-12-14", to: "2026-12-20", hours: 22, title: "Cells and start orgo", items: [
+      ["bb", "Read", "Biology Ch 3–6: Designing Experiments, Biotechnology, Eukaryotic Cells, Prokaryotes and Viruses"],
+      ["bb", "QBank", "Biology QBank: the 1 Unit 2 question, 25 of 77 from Unit 3"],
+      ["cp", "Read", "Organic Chemistry Ch 1–3: Chemical Bonding, Structure of Organic Molecules, Isomers"],
+      ["cp", "Read", "Physics Ch 2: Fluid Dynamics"],
+      ["cp", "QBank", "Physics Unit 2 QBank: 25 of 74 questions"],
+      ["ps", "Read", "Behavioral Sciences Ch 26–28: Personality Theories, Stress, Attitude and Behavior Change"],
+      ["ps", "QBank", "Behavioral Sciences Unit 5 QBank: 10 of 30 questions"],
+      ["cars", "CARS", "5 UWorld CARS passages, timed"]] },
+    { from: "2026-12-21", to: "2026-12-27", hours: 14, title: "Holiday week", light: true, items: [
+      ["bb", "Read", "Biology Ch 7–8: Genetics, Evolution"],
+      ["bb", "QBank", "Biology Unit 4 QBank: 20 of 64 questions"],
+      ["cp", "Read", "Organic Chemistry Ch 4–5: Organic Nomenclature, Overview of Organic Reactions"],
+      ["cp", "QBank", "Organic Chemistry Unit 1 QBank: 30 of 89 questions"],
+      ["ps", "Read", "Behavioral Sciences Ch 29–31: Psychological Disorders, their Biological Underpinnings, Treatment"],
+      ["ps", "QBank", "Behavioral Sciences Unit 6 QBank: all 5 questions"],
+      ["cars", "CARS", "3 UWorld CARS passages"]] },
+    { from: "2026-12-28", to: "2027-01-03", hours: 24, title: "Reproduction and systems", items: [
+      ["bb", "Read", "Biology Ch 9–12: Reproductive Systems; Pregnancy and Development; Endocrine; Nervous"],
+      ["bb", "QBank", "Biology QBank: 12 of 35 from Unit 5, 30 of 89 from Unit 6"],
+      ["cp", "Read", "Organic Chemistry Ch 6–8: Hydrocarbons; Alkyl Halides, Ethers, Sulfur Groups; Alcohols"],
+      ["cp", "Read", "Physics Ch 3: Electricity and Magnetism"],
+      ["cp", "QBank", "Physics Unit 3 QBank: 30 of 88 questions"],
+      ["ps", "Read", "Behavioral Sciences Ch 32–35: Sociology Theories and Research, Culture, Identities"],
+      ["ps", "QBank", "Behavioral Sciences Unit 7 QBank: all 3 questions"],
+      ["cars", "CARS", "5 UWorld CARS passages, timed"]] },
+    { from: "2027-01-04", to: "2027-01-10", hours: 26, title: "Organ systems I", items: [
+      ["bb", "Read", "Biology Ch 13–16: Circulation, Respiration, Digestion, Excretion"],
+      ["bb", "QBank", "Biology QBank: 15 of 49 from Unit 7, 20 of 57 from Unit 8"],
+      ["cp", "Read", "Organic Chemistry Ch 9–11: Aldehydes and Ketones, Carboxylic Acids, Carboxylic Acid Derivatives"],
+      ["cp", "Read", "Physics Ch 4: Waves, Sound, and Light"],
+      ["cp", "QBank", "Physics Unit 4 QBank: 40 of 117 questions"],
+      ["ps", "Read", "Behavioral Sciences Ch 36–42: Interacting with Others through Normative Behavior"],
+      ["ps", "QBank", "Behavioral Sciences Unit 8 QBank: 25 of 71 questions"],
+      ["cars", "CARS", "5 UWorld CARS passages, timed"]] },
+    { from: "2027-01-11", to: "2027-01-17", hours: 26, title: "Finish the books", items: [
+      ["bb", "Read", "Biology Ch 17–20: Muscular, Skeletal, Skin, Immune"],
+      ["bb", "QBank", "Biology QBank: 15 of 44 from Unit 9, 15 of 40 from Unit 10"],
+      ["cp", "Read", "Organic Chemistry Ch 12–14: Amines and Amides, Separation and Purification, Spectroscopy"],
+      ["cp", "QBank", "Organic Chemistry QBank: 50 of 150 from Unit 2, 25 of 80 from Unit 3"],
+      ["cp", "Read", "Physics Ch 5: Thermodynamics and Gases"],
+      ["cp", "QBank", "Physics Unit 5 QBank: 15 of 38 questions"],
+      ["ps", "Read", "Behavioral Sciences Ch 43–46: Social Institutions, Demographics, Social Class, Social Change"],
+      ["ps", "QBank", "Behavioral Sciences Unit 9 QBank: 20 of 52 questions"],
+      ["cars", "CARS", "4 UWorld CARS passages, timed"]] },
+
+    // Practice phase: AAMC Sample + FL 1–6, AAMC question packs early, Section Banks late
+    { from: "2027-01-18", to: "2027-01-24", hours: 20, title: "Catch-up and sample test", items: [
+      ["fl", "Review", "Finish any chapter or unit QBank set that slipped"],
+      ["fl", "Review", "Redo every UWorld QBank question you've missed so far"],
+      ["cars", "AAMC", "AAMC CARS Diagnostic Tool: first half"],
+      ["fl", "Exam", "Saturday Jan 23: AAMC Sample Test (unscored), full-length and timed"]] },
+    { from: "2027-01-25", to: "2027-01-31", hours: 20, title: "Review the sample test", items: [
+      ["fl", "Review", "Review the Sample Test, every question, right and wrong"],
+      ["fl", "Review", "Write your weak-topic list from the Sample Test and the UWorld performance page"],
+      ["fl", "AAMC", "AAMC 150 Independent Questions, untimed, in 3 sittings"],
+      ["cars", "AAMC", "AAMC CARS Diagnostic Tool: second half, and read its CARS tips"],
+      ["fl", "QBank", "UWorld timed: 3 blocks of 30, mixed sections"]] },
+    { from: "2027-02-01", to: "2027-02-07", hours: 22, title: "Bio and CARS packs", items: [
+      ["bb", "AAMC", "AAMC Biology Question Pack (120 questions)"],
+      ["cars", "AAMC", "AAMC CARS Question Pack: first half"],
+      ["fl", "QBank", "UWorld timed: 3 blocks of 30, mixed sections"],
+      ["fl", "Read", "Reread the book chapters for 2 weak topics"]] },
+    { from: "2027-02-08", to: "2027-02-14", hours: 24, title: "AAMC FL 1", items: [
+      ["cp", "AAMC", "AAMC Chemistry Question Pack (120 questions)"],
+      ["cars", "AAMC", "AAMC CARS Question Pack: second half"],
+      ["fl", "Exam", "Saturday Feb 13: AAMC Full-length 1"],
+      ["fl", "Review", "Sunday–Monday: review AAMC FL 1 completely"]] },
+    { from: "2027-02-15", to: "2027-02-21", hours: 24, title: "Physics and bio packs", items: [
+      ["cp", "AAMC", "AAMC Physics Question Pack (120 questions)"],
+      ["bb", "AAMC", "AAMC Biology Question Pack II (120 questions)"],
+      ["fl", "QBank", "UWorld timed: 2 blocks of 30, mixed sections"],
+      ["fl", "Read", "Reread the chapters behind your FL 1 misses"],
+      ["cars", "CARS", "5 UWorld CARS passages, timed"]] },
+    { from: "2027-02-22", to: "2027-02-28", hours: 25, title: "AAMC FL 2", items: [
+      ["cars", "AAMC", "AAMC CARS Question Pack II: first half"],
+      ["fl", "QBank", "UWorld timed: 2 blocks of 30, mixed sections"],
+      ["fl", "Exam", "Saturday Feb 27: AAMC Full-length 2"],
+      ["fl", "Review", "Sunday–Monday: review AAMC FL 2 completely"]] },
+    { from: "2027-03-01", to: "2027-03-07", hours: 25, title: "Section Bank begins", items: [
+      ["fl", "AAMC", "AAMC Section Bank: first 100 questions, timed by passage"],
+      ["cars", "AAMC", "AAMC CARS Question Pack II: second half"],
+      ["fl", "QBank", "UWorld timed: 4 blocks of 30, mixed sections"],
+      ["fl", "Read", "Reread the chapters behind your FL 2 misses"]] },
+
+    // Full-length phase
+    { from: "2027-03-08", to: "2027-03-14", hours: 25, title: "AAMC FL 3", items: [
+      ["fl", "AAMC", "AAMC Section Bank: next 100 questions"],
+      ["fl", "Exam", "Saturday Mar 13: AAMC Full-length 3"],
+      ["fl", "QBank", "UWorld timed: 1 block of 30, mixed sections"],
+      ["fl", "Review", "Sunday–Monday: review AAMC FL 3 completely"],
+      ["cars", "CARS", "5 UWorld CARS passages, timed"]] },
+    { from: "2027-03-15", to: "2027-03-21", hours: 25, title: "Finish Section Bank", items: [
+      ["fl", "AAMC", "AAMC Section Bank: last 100 questions"],
+      ["fl", "QBank", "UWorld timed: 4 blocks of 30, mixed sections"],
+      ["fl", "Read", "Reread the chapters behind your FL 3 and Section Bank misses"],
+      ["cars", "CARS", "5 UWorld CARS passages, timed"]] },
+    { from: "2027-03-22", to: "2027-03-28", hours: 22, title: "AAMC FL 4", items: [
+      ["fl", "AAMC", "AAMC Section Bank II: first 50 questions"],
+      ["fl", "QBank", "UWorld timed: 1 block of 30, mixed sections"],
+      ["fl", "Exam", "Saturday Mar 27: AAMC Full-length 4"],
+      ["fl", "Review", "Sunday: start reviewing AAMC FL 4"]] },
+    { from: "2027-03-29", to: "2027-04-04", hours: 15, title: "Before nationals", light: true, items: [
+      ["fl", "Review", "Finish reviewing AAMC FL 4"],
+      ["fl", "QBank", "UWorld timed: 2 blocks of 30, mixed sections"],
+      ["fl", "AAMC", "AAMC Section Bank II: next 50 questions"],
+      ["cars", "CARS", "4 UWorld CARS passages"],
+      ["fl", "Anki", "Get your Anki backlog to zero before you travel"]] },
+    { from: "2027-04-05", to: "2027-04-11", hours: 4, title: "Cheer nationals", light: true, event: "Nationals Apr 6–11", items: [
+      ["fl", "Anki", "Anki reviews, 15 min a day, so the backlog doesn't build up"],
+      ["cars", "CARS", "Optional: 1–2 CARS passages on a travel day"],
+      ["fl", "Rest", "Nothing else. Compete and rest"]] },
+    { from: "2027-04-12", to: "2027-04-18", hours: 22, title: "AAMC FL 5", items: [
+      ["fl", "Anki", "Monday–Tuesday: easy restart, clear the Anki backlog"],
+      ["fl", "AAMC", "AAMC Section Bank II: next 100 questions"],
+      ["fl", "QBank", "UWorld timed: 2 blocks of 30, mixed sections"],
+      ["fl", "Exam", "Saturday Apr 17: AAMC Full-length 5"],
+      ["fl", "Review", "Sunday: review AAMC FL 5"]] },
+    { from: "2027-04-19", to: "2027-04-25", hours: 25, title: "AAMC FL 6", items: [
+      ["fl", "Review", "Finish reviewing AAMC FL 5"],
+      ["fl", "AAMC", "AAMC Section Bank II: last 100 questions"],
+      ["fl", "QBank", "UWorld timed: 2 blocks of 30, mixed sections"],
+      ["fl", "Exam", "Saturday Apr 24: AAMC Full-length 6, your last full-length"],
+      ["fl", "Review", "Sunday: review AAMC FL 6"]] },
+    { from: "2027-04-26", to: "2027-05-02", hours: 20, title: "Last full week", items: [
+      ["fl", "QBank", "UWorld: 4 last blocks of 30 on your weakest topics, done by Friday, April 30"],
+      ["fl", "Review", "Copy your weak-topic list and key notes out of UWorld (access ends May 5)"],
+      ["fl", "Review", "Redo the questions you missed on AAMC FL 1–6 and both Section Banks"],
+      ["cars", "CARS", "Finish the remaining UWorld CARS passages (about 10)"]] },
+    { from: "2027-05-03", to: "2027-05-07", hours: 6, title: "Taper and test day", light: true, items: [
+      ["fl", "Review", "Mon–Tue: light review of your weak-topic list, Anki, 2 CARS passages a day"],
+      ["fl", "Rest", "Wed–Thu: rest. Check your ID, the test center route, and pack snacks"],
+      ["fl", "Exam", "Friday, May 7: test day"]] },
+  ];
+
+  // ---------- dates ----------
+  const pad = n => String(n).padStart(2, "0");
+  const toKey = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const fromKey = k => { const [y, m, d] = k.split("-").map(Number); return new Date(y, m - 1, d); };
+  const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+  const dayDiff = (a, b) => Math.round((fromKey(b) - fromKey(a)) / 864e5);
+  const mondayOf = d => { const x = new Date(d); const w = (x.getDay() + 6) % 7; x.setDate(x.getDate() - w); return x; };
+  const todayKey = () => toKey(new Date());
+  const fmt = (k, opts = { month: "short", day: "numeric" }) => fromKey(k).toLocaleDateString(undefined, opts);
+  const hrs = m => (m / 60);
+  const fmtH = m => { const h = Math.floor(m / 60), mm = Math.round(m % 60); return h ? (mm ? `${h}h ${mm}m` : `${h}h`) : `${mm}m`; };
+  const fmtH1 = m => (Math.round(hrs(m) * 10) / 10).toLocaleString();
+
+  // ---------- state & storage ----------
+  const LS = "mcat-tracker-v1";
+  let state = { sessions: [], exams: [], topics: {}, plan: {}, settings: { weeklyGoal: 15, target: 515 } };
+  let db = null;
+  // Sync mode: the Vercel build defines window.MCAT_SUPABASE and loads supabase-js; the Claude artifact does neither.
+  const SB_CONF = window.MCAT_SUPABASE && window.MCAT_SUPABASE.url && window.MCAT_SUPABASE.anonKey ? window.MCAT_SUPABASE : null;
+  let sb = null, sbUser = null;
+  try { const c = JSON.parse(localStorage.getItem(LS) || "null"); if (c) state = { ...state, ...c, settings: { ...state.settings, ...(c.settings || {}) } }; } catch (e) {}
+  const cache = () => { try { localStorage.setItem(LS, JSON.stringify(state)); } catch (e) {} };
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  const $ = id => document.getElementById(id);
+  const el = (tag, attrs = {}, ...kids) => {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === "class") n.className = v; else if (k === "style") n.style.cssText = v;
+      else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v);
+    }
+    for (const c of kids) if (c != null) n.append(c);
+    return n;
+  };
+  const setNote = t => { $("saveNote").textContent = t; };
+
+  // ---------- Supabase sync (Vercel build) ----------
+  const TABLE = "mcat_docs";
+  function needSignIn() { if (SB_CONF && !sbUser) throw new Error("signed_out"); }
+  async function sbPut(coll, id, data) {
+    const { error } = await sb.from(TABLE).upsert({ user_id: sbUser.id, coll, id, data, updated_at: new Date().toISOString() }, { onConflict: "user_id,coll,id" });
+    if (error) throw error;
+  }
+  async function sbDel(coll, id) {
+    const { error } = await sb.from(TABLE).delete().match({ user_id: sbUser.id, coll, id });
+    if (error) throw error;
+  }
+  async function sbLoad() {
+    const { data, error } = await sb.from(TABLE).select("coll,id,data").range(0, 9999);
+    if (error) throw error;
+    const sessions = [], exams = [];
+    for (const r of data) {
+      if (r.coll === "sessions") sessions.push({ ...r.data, id: r.id });
+      else if (r.coll === "exams") exams.push({ ...r.data, id: r.id });
+      else if (r.coll === "meta") applySingle("meta/" + r.id, r.data, true);
+    }
+    state.sessions = sessions; state.exams = exams;
+    cache(); render();
+  }
+  const saveErr = e => e && e.message === "signed_out" ? "Sign in at the top of the page first." : "Couldn't save. Check your connection and try again.";
+
+  async function writeDoc(coll, id, data) {
+    if (db) return db.collection(coll).doc(id).set(data);
+    needSignIn();
+    if (sb) await sbPut(coll, id, data);
+    local(coll, id, data);
+  }
+  async function deleteDoc(coll, id) {
+    if (db) return db.collection(coll).doc(id).delete();
+    needSignIn();
+    if (sb) await sbDel(coll, id);
+    local(coll, id, null);
+  }
+  async function writeSingle(path, data) {
+    if (db) return db.doc(path).set(data);
+    needSignIn();
+    if (sb) { const [c, i] = path.split("/"); await sbPut(c, i, data); }
+    applySingle(path, data); cache(); render();
+  }
+  // Apply a meta document; a remote load skips topics/plan while a local change is still being saved.
+  function applySingle(path, data, remote) {
+    if (path === "meta/settings") state.settings = { ...state.settings, ...data };
+    else if (path === "meta/plan") { if (!(remote && (planDirty || planWriting))) state.plan = { ...(data.done || {}) }; }
+    else if (path === "meta/topics") { if (!(remote && (topicDirty || topicWriting))) state.topics = { ...(data.status || {}) }; }
+  }
+  function local(coll, id, data) {
+    const arr = state[coll].filter(x => x.id !== id);
+    if (data) arr.push({ ...data, id });
+    state[coll] = arr; cache(); render();
+  }
+
+  // ---------- computations ----------
+  const minutesByDay = () => { const m = {}; for (const s of state.sessions) m[s.date] = (m[s.date] || 0) + (s.minutes || 0); return m; };
+  function streak(byDay) {
+    let d = new Date(), n = 0;
+    if (!byDay[toKey(d)]) d = addDays(d, -1);
+    while (byDay[toKey(d)]) { n++; d = addDays(d, -1); }
+    return n;
+  }
+  const examTotal = e => e.cp + e.cars + e.bb + e.ps;
+  const sortedExams = () => [...state.exams].sort((a, b) => a.date.localeCompare(b.date) || (a.createdAt || 0) - (b.createdAt || 0));
+
+  // ---------- render: header ----------
+  function renderHeader() {
+    const t = todayKey();
+    const left = dayDiff(t, EXAM);
+    const untilStart = dayDiff(t, START);
+    if (left < 0) { $("daysLeft").textContent = "✓"; $("daysUnit").innerHTML = "test day<br>is behind you"; }
+    else if (left === 0) { $("daysLeft").textContent = "0"; $("daysUnit").innerHTML = "it's<br>test day"; }
+    else { $("daysLeft").textContent = left; $("daysUnit").innerHTML = `day${left === 1 ? "" : "s"} until<br>test day`; }
+    const weeksLeft = Math.max(0, Math.ceil(left / 7));
+    $("subline").textContent = untilStart > 0
+      ? `Study plan starts ${untilStart === 1 ? "tomorrow" : "in " + untilStart + " days"}, Saturday, Oct 24. That's ${dayDiff(START, EXAM)} days and about ${Math.round(dayDiff(START, EXAM) / 7)} weeks of prep.`
+      : `${weeksLeft} week${weeksLeft === 1 ? "" : "s"} left. Day ${Math.min(dayDiff(START, t) + 1, dayDiff(START, EXAM))} of ${dayDiff(START, EXAM)}.`;
+
+    const total = dayDiff(START, EXAM) + 1;
+    const bar = $("tlBar"); bar.textContent = "";
+    for (const p of PHASES) {
+      const w = (dayDiff(p.from, p.to) + 1) / total * 100;
+      bar.append(el("div", { class: "tl-seg", style: `width:${w}%;--mix:${p.mix}`, title: `${p.name}: ${fmt(p.from)} – ${fmt(p.to)}` }, p.name));
+    }
+    for (const e of EVENTS) {
+      const l = dayDiff(START, e.from) / total * 100, w = (dayDiff(e.from, e.to) + 1) / total * 100;
+      bar.append(el("div", { class: "tl-event", style: `left:${l}%;width:${w}%`, title: `${e.name}: ${fmt(e.from)} – ${fmt(e.to)}` }));
+    }
+    const pos = Math.min(Math.max(dayDiff(START, t) / total, 0), 1) * 100;
+    bar.append(el("div", { class: "tl-today", style: `left:calc(${pos}% - 1px)`, title: "Today" }));
+    const cur = PHASES.find(p => t >= p.from && t <= p.to);
+    const now = $("phaseNow"); now.textContent = "";
+    if (cur) now.append("Now: ", el("b", {}, cur.name), ` (until ${fmt(cur.to)}). ${cur.tip}`);
+    else if (t < START) now.append("Up first: ", el("b", {}, PHASES[0].name), `, starting ${fmt(START)}. ${PHASES[0].tip}`);
+    else now.append(el("b", {}, "Plan complete."), " Log anything you still want to keep.");
+  }
+
+  // ---------- render: overview ----------
+  function renderStats() {
+    const byDay = minutesByDay();
+    const totalM = state.sessions.reduce((a, s) => a + (s.minutes || 0), 0);
+    const days = Object.keys(byDay).length;
+    $("sTotal").innerHTML = `${fmtH1(totalM)}<small> h</small>`;
+    $("sTotalD").textContent = days ? `${days} study day${days === 1 ? "" : "s"} · ${state.sessions.length} session${state.sessions.length === 1 ? "" : "s"}` : "No sessions yet";
+
+    const mon = toKey(mondayOf(new Date())), sun = toKey(addDays(mondayOf(new Date()), 6));
+    const wk = state.sessions.filter(s => s.date >= mon && s.date <= sun).reduce((a, s) => a + s.minutes, 0);
+    const goal = weekTarget(mon);
+    $("sWeek").innerHTML = `${fmtH1(wk)}<small> / ${goal} h</small>`;
+    $("sWeekBar").style.width = Math.min(100, hrs(wk) / goal * 100) + "%";
+
+    const st = streak(byDay);
+    $("sStreak").innerHTML = `${st}<small> day${st === 1 ? "" : "s"}</small>`;
+    $("sStreakD").textContent = st ? (byDay[todayKey()] ? "Includes today" : "Study today to keep it going") : "Log a session to start one";
+
+    let q = 0, c = 0; for (const s of state.sessions) if (s.questions > 0) { q += s.questions; c += Math.min(s.correct || 0, s.questions); }
+    $("sAcc").textContent = q ? Math.round(c / q * 100) + "%" : "—";
+    $("sAccD").textContent = q ? `${c.toLocaleString()} of ${q.toLocaleString()} correct` : "From logged question sets";
+
+    const ex = sortedExams(), last = ex[ex.length - 1], target = state.settings.target || 515;
+    $("sFL").textContent = last ? examTotal(last) : "—";
+    $("sFLD").textContent = last ? `${last.name} · ${examTotal(last) >= target ? "at or above" : (target - examTotal(last)) + " below"} target ${target}` : `Target ${target}`;
+    $("gWeekly").value = state.settings.weeklyGoal || 15; $("gTarget").value = target;
+  }
+
+  function levelFor(m) { return !m ? 0 : m < 60 ? 1 : m < 180 ? 2 : m < 300 ? 3 : 4; }
+  const LEVEL_MIX = ["0%", "28%", "52%", "76%", "100%"];
+  document.querySelectorAll(".legend .sw[data-l]").forEach(s => s.style.background = `color-mix(in srgb, var(--accent) ${LEVEL_MIX[s.dataset.l]}, var(--cell))`);
+
+  function renderHeat() {
+    const byDay = minutesByDay(), heat = $("heat"); heat.textContent = "";
+    const t = todayKey();
+    // day-label column
+    heat.append(el("div"));
+    ["Mon", "", "Wed", "", "Fri", "", "Sun"].forEach(l => heat.append(el("div", { class: "dl" }, l)));
+    let wk = mondayOf(fromKey(START)), lastMonth = -1;
+    const end = fromKey(EXAM);
+    while (wk <= end) {
+      const m = wk.getMonth();
+      // label a month on the first week whose Monday falls in it
+      heat.append(el("div", { class: "mo" }, m !== lastMonth ? wk.toLocaleDateString(undefined, { month: "short" }) : ""));
+      lastMonth = m;
+      for (let i = 0; i < 7; i++) {
+        const k = toKey(addDays(wk, i));
+        if (k < START || k > EXAM) { heat.append(el("div", { class: "cell out" })); continue; }
+        const mins = byDay[k] || 0, lv = levelFor(mins);
+        const ev = eventOn(k);
+        const cls = "cell" + (k === EXAM ? " exam" : "") + (ev && k !== t ? " event" : "") + (k === t ? " today" : "");
+        heat.append(el("div", { class: cls, title: `${fmt(k, { weekday: "short", month: "short", day: "numeric" })}: ${mins ? fmtH(mins) : "no study logged"}${k === EXAM ? " · TEST DAY" : ""}${ev ? " · " + ev.name : ""}`,
+          style: lv ? `background:color-mix(in srgb, var(--accent) ${LEVEL_MIX[lv]}, var(--cell))` : "" }));
+      }
+      wk = addDays(wk, 7);
+    }
+  }
+
+  function renderWeekChart() {
+    const box = $("weekChart"); box.textContent = "";
+    const weeks = []; let wk = mondayOf(fromKey(START)); const end = fromKey(EXAM);
+    while (wk <= end) { weeks.push(toKey(wk)); wk = addDays(wk, 7); }
+    const sums = weeks.map(w => { const e = toKey(addDays(fromKey(w), 6)); return state.sessions.filter(s => s.date >= w && s.date <= e).reduce((a, s) => a + s.minutes, 0) / 60; });
+    const targets = weeks.map(weekTarget);
+    const top = Math.max(...targets.map(t => t * 1.15), ...sums, 5);
+    const step = top > 40 ? 10 : 5, yMax = Math.ceil(top / step) * step;
+    const W = 520, H = 200, L = 30, R = 8, T = 10, B = 24, iw = W - L - R, ih = H - T - B;
+    const bw = iw / weeks.length;
+    const y = v => T + ih - v / yMax * ih;
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("width", "100%"); svg.setAttribute("role", "img");
+    svg.setAttribute("aria-label", "Hours studied per week");
+    const add = (tag, a, text) => { const n = document.createElementNS(ns, tag); for (const k in a) n.setAttribute(k, a[k]); if (text != null) n.textContent = text; svg.append(n); return n; };
+    for (let v = 0; v <= yMax; v += step) {
+      add("line", { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: "var(--line)", "stroke-width": 1 });
+      add("text", { x: L - 6, y: y(v) + 4, "text-anchor": "end" }, v);
+    }
+    const curWk = toKey(mondayOf(new Date()));
+    sums.forEach((h, i) => {
+      const x = L + i * bw + bw * 0.18, w = bw * 0.64;
+      const r = add("rect", { x, y: y(h), width: w, height: Math.max(0, y(0) - y(h)), rx: 2, fill: weeks[i] === curWk ? "var(--accent)" : "color-mix(in srgb, var(--accent) 55%, var(--cell))" });
+      const tt = document.createElementNS(ns, "title"); tt.textContent = `Week of ${fmt(weeks[i])}: ${(Math.round(h * 10) / 10)} h`; r.append(tt);
+      const d = fromKey(weeks[i]);
+      if (i === 0 || d.getDate() <= 7) add("text", { x: L + i * bw + bw / 2, y: H - 6, "text-anchor": "middle" }, d.toLocaleDateString(undefined, { month: "short" }));
+      add("line", { x1: L + i * bw + 1, x2: L + (i + 1) * bw - 1, y1: y(targets[i]), y2: y(targets[i]), stroke: "var(--warn)", "stroke-width": 2 });
+    });
+    box.append(svg);
+  }
+
+  function renderSecBars() {
+    const box = $("secBars"); box.textContent = "";
+    const by = {}; for (const s of state.sessions) by[s.section] = (by[s.section] || 0) + s.minutes;
+    const max = Math.max(1, ...Object.values(by));
+    for (const s of SECTIONS) {
+      const m = by[s.id] || 0;
+      box.append(el("div", { class: "secrow" },
+        el("span", {}, s.short),
+        el("div", { class: "track" }, el("i", { style: `width:${m / max * 100}%;background:var(--${s.id})` })),
+        el("span", { class: "num" }, m ? fmtH1(m) + " h" : "0 h")));
+    }
+    if (!state.sessions.length) box.append(el("div", { class: "hint" }, "Bars fill in as you log sessions."));
+  }
+
+  // ---------- render: log ----------
+  const pending = new Set();
+  function delBtn(key, onConfirm) {
+    const b = el("button", { class: "linkbtn" + (pending.has(key) ? " confirm" : ""), type: "button" }, pending.has(key) ? "Confirm delete" : "Delete");
+    b.addEventListener("click", async () => {
+      if (!pending.has(key)) { pending.add(key); render(); setTimeout(() => { if (pending.delete(key)) render(); }, 4000); return; }
+      pending.delete(key);
+      try { await onConfirm(); } catch (e) { setNote("Couldn't delete that. Check your connection and try again."); }
+    });
+    return b;
+  }
+  let showAll = false;
+  function renderHistory() {
+    const box = $("history"); box.textContent = "";
+    const list = [...state.sessions].sort((a, b) => b.date.localeCompare(a.date) || (b.createdAt || 0) - (a.createdAt || 0));
+    $("histHint").textContent = list.length ? `${list.length} session${list.length === 1 ? "" : "s"}` : "";
+    if (!list.length) { box.append(el("div", { class: "empty" }, "No sessions yet. Your first one goes in the form above, and it shows up here, on the calendar, and in your weekly hours.")); return; }
+    const groups = []; for (const s of list) { const g = groups[groups.length - 1]; if (g && g.date === s.date) g.items.push(s); else groups.push({ date: s.date, items: [s] }); }
+    const shown = showAll ? groups : groups.slice(0, 14);
+    const wrap = el("div", { style: "display:grid;gap:12px" });
+    for (const g of shown) {
+      const tot = g.items.reduce((a, s) => a + s.minutes, 0);
+      const grp = el("div", { class: "daygroup" }, el("div", { class: "dayhead" }, el("b", {}, fmt(g.date, { weekday: "long", month: "short", day: "numeric" })), el("span", { class: "mono" }, fmtH(tot))));
+      for (const s of g.items) {
+        const sec = SEC[s.section] || SEC.fl;
+        const extra = s.questions ? ` · ${s.correct ?? 0}/${s.questions} correct (${Math.round((s.correct || 0) / s.questions * 100)}%)` : "";
+        grp.append(el("div", { class: "entry" },
+          el("span", { class: "chip", style: `--c:var(--${sec.id})` }, sec.short),
+          el("div", { class: "what" }, el("div", {}, s.kind + extra), s.notes ? el("div", { class: "note" }, s.notes) : null),
+          el("span", { class: "dur" }, fmtH(s.minutes)),
+          el("span", { class: "del" }, delBtn("s:" + s.id, () => deleteDoc("sessions", s.id)))));
+      }
+      wrap.append(grp);
+    }
+    box.append(wrap);
+    if (groups.length > 14) box.append(el("button", { class: "btn ghost small", type: "button", style: "margin-top:12px", onclick: () => { showAll = !showAll; renderHistory(); } }, showAll ? "Show recent only" : `Show all ${groups.length} days`));
+  }
+
+  // ---------- render: scores ----------
+  function renderScores() {
+    const ex = sortedExams(), target = state.settings.target || 515;
+    const chart = $("scoreChart"); chart.textContent = "";
+    if (!ex.length) chart.append(el("div", { class: "empty" }, "Your practice test totals will chart here against your target of " + target + ". Add your first test below, such as a diagnostic or AAMC sample test."));
+    else {
+      const W = 640, H = 220, L = 36, R = 16, T = 14, B = 28, iw = W - L - R, ih = H - T - B;
+      const totals = ex.map(examTotal);
+      let lo = Math.min(...totals, target) - 6, hi = Math.max(...totals, target) + 4;
+      lo = Math.max(472, Math.floor(lo / 5) * 5); hi = Math.min(528, Math.ceil(hi / 5) * 5);
+      const y = v => T + ih - (v - lo) / (hi - lo) * ih;
+      const x = i => ex.length === 1 ? L + iw / 2 : L + i / (ex.length - 1) * iw;
+      const ns = "http://www.w3.org/2000/svg", svg = document.createElementNS(ns, "svg");
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("width", "100%"); svg.setAttribute("role", "img"); svg.setAttribute("aria-label", "Practice test totals over time");
+      const add = (tag, a, text) => { const n = document.createElementNS(ns, tag); for (const k in a) n.setAttribute(k, a[k]); if (text != null) n.textContent = text; svg.append(n); return n; };
+      const stepY = (hi - lo) > 30 ? 10 : 5;
+      for (let v = Math.ceil(lo / stepY) * stepY; v <= hi; v += stepY) { add("line", { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: "var(--line)" }); add("text", { x: L - 6, y: y(v) + 4, "text-anchor": "end" }, v); }
+      add("line", { x1: L, x2: W - R, y1: y(target), y2: y(target), stroke: "var(--warn)", "stroke-width": 1.5, "stroke-dasharray": "5 4" });
+      add("text", { x: W - R, y: y(target) - 5, "text-anchor": "end", style: "fill:var(--warn)" }, `target ${target}`);
+      if (ex.length > 1) {
+        const pts = totals.map((v, i) => `${x(i)},${y(v)}`).join(" ");
+        add("polygon", { points: `${x(0)},${y(lo)} ${pts} ${x(ex.length - 1)},${y(lo)}`, fill: "color-mix(in srgb, var(--accent) 12%, transparent)" });
+        add("polyline", { points: pts, fill: "none", stroke: "var(--accent)", "stroke-width": 2.5, "stroke-linejoin": "round" });
+      }
+      totals.forEach((v, i) => {
+        const last = i === totals.length - 1;
+        const c = add("circle", { cx: x(i), cy: y(v), r: last ? 6 : 4, fill: last ? "var(--accent)" : "var(--surface)", stroke: "var(--accent)", "stroke-width": 2 });
+        const tt = document.createElementNS(ns, "title"); tt.textContent = `${ex[i].name} (${fmt(ex[i].date)}): ${v}`; c.append(tt);
+        add("text", { x: x(i), y: y(v) - 10, "text-anchor": "middle", style: "fill:var(--ink)" }, v);
+        if (ex.length <= 8 || i === 0 || last) add("text", { x: x(i), y: H - 8, "text-anchor": "middle" }, fmt(ex[i].date));
+      });
+      chart.append(svg);
+      const first = totals[0], lastT = totals[totals.length - 1];
+      $("trendHint").textContent = ex.length > 1 ? `${lastT - first >= 0 ? "+" : ""}${lastT - first} since first test` : "Scale 472–528";
+    }
+
+    const list = $("examList"); list.textContent = "";
+    if (!ex.length) { list.append(el("div", { class: "empty" }, "No practice tests yet.")); return; }
+    const tb = el("tbody");
+    for (const e of [...ex].reverse()) {
+      tb.append(el("tr", {},
+        el("td", { class: "name" }, e.name), el("td", {}, fmt(e.date)),
+        el("td", {}, String(e.cp)), el("td", {}, String(e.cars)), el("td", {}, String(e.bb)), el("td", {}, String(e.ps)),
+        el("td", { class: "tot" }, String(examTotal(e))),
+        el("td", {}, delBtn("e:" + e.id, () => deleteDoc("exams", e.id)))));
+    }
+    const head = el("tr", {}, ...["Test", "Date", "C/P", "CARS", "B/B", "P/S", "Total", ""].map(h => el("th", {}, h)));
+    list.append(el("div", { class: "table-scroll" }, el("table", { class: "score-table" }, el("thead", {}, head), tb)));
+  }
+
+  // ---------- render: topics ----------
+  function renderTopics() {
+    const box = $("topicList"); box.textContent = "";
+    let done = 0, all = 0;
+    for (const sid of ["cp", "cars", "bb", "ps"]) {
+      const items = TOPICS[sid];
+      const d = items.filter(([c]) => state.topics[c] === 2).length; done += d; all += items.length;
+      const sec = el("div", { class: "topic-sec" },
+        el("h3", {}, el("span", { class: "chip", style: `--c:var(--${sid})` }, SEC[sid].name), el("span", { class: "hint mono" }, `${d} / ${items.length} done`)));
+      const grid = el("div", { class: "topics" });
+      for (const [code, name] of items) {
+        const s = state.topics[code] || 0;
+        const b = el("button", { class: "topic", type: "button", "data-s": String(s), "aria-label": `${code} ${name}: ${["not started", "in review", "done"][s]}` },
+          el("span", { class: "bubble" }), el("span", { class: "code" }, code), el("span", { class: "t" }, name));
+        b.addEventListener("click", () => cycleTopic(code));
+        grid.append(b);
+      }
+      sec.append(grid); box.append(sec);
+    }
+    $("topicHint").textContent = `${done} of ${all} done`;
+  }
+  let topicTimer = null, topicWriting = false, topicDirty = false;
+  function cycleTopic(code) {
+    state.topics = { ...state.topics, [code]: ((state.topics[code] || 0) + 1) % 3 };
+    cache(); renderTopics();
+    topicDirty = true; clearTimeout(topicTimer); topicTimer = setTimeout(flushTopics, 700);
+  }
+  async function flushTopics() {
+    if (topicWriting || !topicDirty) return;
+    topicWriting = true; topicDirty = false;
+    try { await writeSingle("meta/topics", { status: state.topics }); setNote(savedText()); }
+    catch (e) { setNote("Couldn't save topic progress. It will retry on your next change."); topicDirty = true; }
+    topicWriting = false;
+    if (topicDirty) flushTopics();
+  }
+
+  // ---------- render: plan ----------
+  // Planned hours for the Mon-start week beginning `monKey`: the plan week(s) inside it, else the weekly goal.
+  function weekTarget(monKey) {
+    const sunKey = toKey(addDays(fromKey(monKey), 6));
+    const inWeek = PLAN.filter(p => p.from <= sunKey && p.to >= monKey);
+    return inWeek.length ? inWeek.reduce((a, p) => a + p.hours, 0) : (state.settings.weeklyGoal || 15);
+  }
+  const loggedBetween = (a, b) => state.sessions.filter(s => s.date >= a && s.date <= b).reduce((t, s) => t + s.minutes, 0);
+  function currentPlanIndex() {
+    const t = todayKey();
+    if (t < PLAN[0].from) return 0;
+    return PLAN.findIndex(p => t >= p.from && t <= p.to);
+  }
+  const dateRange = p => p.from === p.to ? fmt(p.from) : `${fmt(p.from)} – ${fmt(p.to)}`;
+
+  function weekCard(p, i, cur) {
+    const logged = loggedBetween(p.from, p.to);
+    const done = p.items.filter((_, j) => state.plan[`c${i}-${j}`]).length;
+    const label = i === 0 ? "Kickoff" : `Week ${i}`;
+    const card = el("div", { class: "week" + (i === cur ? " current" : "") },
+      el("div", { class: "week-head" },
+        el("div", {},
+          el("div", { class: "when" }, `${label} · ${dateRange(p)}`),
+          el("h3", {}, p.title, i === cur ? el("span", { class: "pill" }, todayKey() < p.from ? "Up next" : "This week") : null,
+            p.event ? el("span", { class: "pill event" }, p.event) : p.light ? el("span", { class: "pill light" }, "Lighter") : null)),
+        el("div", { class: "week-hrs" },
+          el("span", { class: "mono" }, `${fmtH1(logged)} / ${p.hours} h · ${done}/${p.items.length} tasks`),
+          el("div", { class: "meter" }, el("i", { style: `width:${Math.min(100, hrs(logged) / p.hours * 100)}%` })))));
+    const list = el("div", { class: "items" });
+    p.items.forEach(([sec, kind, text], j) => {
+      const id = `c${i}-${j}`, on = !!state.plan[id];
+      const b = el("button", { class: "item", type: "button", "data-done": String(on), "aria-pressed": String(on), style: `--c:var(--${sec})` },
+        el("span", { class: "box" }), el("span", { class: "kind" }, kind), el("span", { class: "txt" }, text));
+      b.addEventListener("click", () => togglePlan(id));
+      list.append(b);
+    });
+    card.append(list);
+    return card;
+  }
+
+  function renderPlan() {
+    const cur = currentPlanIndex();
+    const box = $("weeks"); box.textContent = "";
+    let lastPhase = null;
+    PLAN.forEach((p, i) => {
+      const ph = PHASES.find(x => p.from >= x.from && p.from <= x.to);
+      if (ph && ph !== lastPhase) { box.append(el("div", { class: "phase-head" }, `${ph.name} · ${fmt(ph.from)} – ${fmt(ph.to)}`)); lastPhase = ph; }
+      box.append(weekCard(p, i, cur));
+    });
+    const all = PLAN.reduce((a, p) => a + p.items.length, 0), done = PLAN.reduce((a, p, i) => a + p.items.filter((_, j) => state.plan[`c${i}-${j}`]).length, 0);
+    $("planHint").textContent = `${done} of ${all} tasks done · ${PLAN.reduce((a, p) => a + p.hours, 0)} h planned`;
+
+    const tw = $("thisWeek"); tw.textContent = "";
+    if (cur >= 0) {
+      const c = weekCard(PLAN[cur], cur, cur); c.classList.add("card");
+      tw.append(c);
+    }
+
+    // Ramp chart: planned hours per week with logged hours filled in
+    const rc = $("rampChart"); rc.textContent = "";
+    const W = 640, H = 170, L = 30, R = 8, T = 12, B = 24, iw = W - L - R, ih = H - T - B;
+    const yMax = 30, bw = iw / PLAN.length, y = v => T + ih - Math.min(v, yMax) / yMax * ih;
+    const ns = "http://www.w3.org/2000/svg", svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("width", "100%"); svg.setAttribute("role", "img"); svg.setAttribute("aria-label", "Planned and logged hours per week of content review");
+    const add = (tag, a, text) => { const n = document.createElementNS(ns, tag); for (const k in a) n.setAttribute(k, a[k]); if (text != null) n.textContent = text; svg.append(n); return n; };
+    for (let v = 0; v <= yMax; v += 10) { add("line", { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: "var(--line)" }); add("text", { x: L - 6, y: y(v) + 4, "text-anchor": "end" }, v); }
+    PLAN.forEach((p, i) => {
+      const x = L + i * bw + bw * 0.15, w = bw * 0.7, lh = hrs(loggedBetween(p.from, p.to));
+      const r = add("rect", { x, y: y(p.hours), width: w, height: y(0) - y(p.hours), rx: 2, fill: "var(--cell)", stroke: i === cur ? "var(--accent)" : "none", "stroke-width": 1.5 });
+      const tt = document.createElementNS(ns, "title"); tt.textContent = `${i ? "Week " + i : "Kickoff"} (${dateRange(p)}): ${p.hours} h planned, ${Math.round(lh * 10) / 10} h logged`; r.append(tt);
+      if (lh > 0) add("rect", { x, y: y(lh), width: w, height: y(0) - y(lh), rx: 2, fill: "var(--accent)", "pointer-events": "none" });
+      if (p.event) add("rect", { x: x - 1, y: T, width: w + 2, height: ih, fill: "none", stroke: "var(--ps)", "stroke-dasharray": "3 3" });
+      const d = fromKey(p.from);
+      if (i === 0 || d.getDate() <= 7) add("text", { x: x + w / 2, y: H - 6, "text-anchor": "middle" }, d.toLocaleDateString(undefined, { month: "short" }));
+    });
+    rc.append(svg);
+  }
+  let planTimer = null, planWriting = false, planDirty = false;
+  function togglePlan(id) {
+    const next = { ...state.plan };
+    if (next[id]) delete next[id]; else next[id] = true;
+    state.plan = next; cache(); renderPlan();
+    planDirty = true; clearTimeout(planTimer); planTimer = setTimeout(flushPlan, 700);
+  }
+  async function flushPlan() {
+    if (planWriting || !planDirty) return;
+    planWriting = true; planDirty = false;
+    try { await writeSingle("meta/plan", { done: state.plan }); setNote(savedText()); }
+    catch (e) { setNote("Couldn't save plan progress. It will retry on your next change."); planDirty = true; }
+    planWriting = false;
+    if (planDirty) flushPlan();
+  }
+
+  function render() { renderHeader(); renderStats(); renderHeat(); renderWeekChart(); renderSecBars(); renderPlan(); renderHistory(); renderScores(); renderTopics(); }
+  const savedText = () => db ? "Saved to your account. Your log follows you to any device where you open this page."
+    : SB_CONF ? (sbUser ? `Synced to ${sbUser.email}. Changes show up on your other devices when you open the app there.` : "Sign in at the top of the page to load and save your study log.")
+    : "Saved in this browser only. Open this page signed in to Claude to keep it across devices.";
+
+  // ---------- forms ----------
+  const secSel = $("lSection");
+  for (const s of SECTIONS) secSel.append(el("option", { value: s.id }, s.name));
+  $("lDate").value = todayKey() < START ? START : todayKey();
+  $("eDate").value = todayKey();
+
+  $("logForm").addEventListener("submit", async ev => {
+    ev.preventDefault();
+    const msg = $("logMsg"); msg.className = "msg";
+    const minutes = (Number($("lHours").value) || 0) * 60 + (Number($("lMins").value) || 0);
+    const qs = $("lQ").value === "" ? 0 : Number($("lQ").value), cr = $("lC").value === "" ? 0 : Number($("lC").value);
+    if (!$("lDate").value) { msg.className = "msg err"; msg.textContent = "Pick a date."; return; }
+    if (minutes <= 0) { msg.className = "msg err"; msg.textContent = "Enter how long you studied."; return; }
+    if (cr > qs) { msg.className = "msg err"; msg.textContent = "Correct can't be more than the number of questions."; return; }
+    const id = uid();
+    const data = { date: $("lDate").value, section: secSel.value, kind: $("lKind").value, minutes, questions: qs, correct: cr, notes: $("lNotes").value.trim().slice(0, 1000), createdAt: Date.now() };
+    try {
+      await writeDoc("sessions", id, data);
+      msg.textContent = `Added ${fmtH(minutes)} of ${SEC[data.section].name} on ${fmt(data.date)}.`;
+      $("lNotes").value = ""; $("lQ").value = ""; $("lC").value = "";
+    } catch (e) { msg.className = "msg err"; msg.textContent = e && e.code === "quota_exceeded" ? "Storage is full. Delete some old sessions to add more." : saveErr(e); }
+  });
+
+  $("examForm").addEventListener("submit", async ev => {
+    ev.preventDefault();
+    const msg = $("examMsg"); msg.className = "msg";
+    const v = id => Number($(id).value);
+    const data = { name: $("eName").value.trim().slice(0, 80), date: $("eDate").value, cp: v("eCP"), cars: v("eCARS"), bb: v("eBB"), ps: v("ePS"), createdAt: Date.now() };
+    if ([data.cp, data.cars, data.bb, data.ps].some(n => !(n >= 118 && n <= 132))) { msg.className = "msg err"; msg.textContent = "Each section score must be between 118 and 132."; return; }
+    try {
+      await writeDoc("exams", uid(), data);
+      msg.textContent = `Added ${data.name}: ${examTotal(data)}.`;
+      ["eName", "eCP", "eCARS", "eBB", "ePS"].forEach(i => $(i).value = "");
+    } catch (e) { msg.className = "msg err"; msg.textContent = saveErr(e); }
+  });
+
+  $("goalForm").addEventListener("submit", async ev => {
+    ev.preventDefault();
+    const msg = $("goalMsg"); msg.className = "msg";
+    const wg = Number($("gWeekly").value), tg = Number($("gTarget").value);
+    if (!(wg >= 1 && wg <= 80)) { msg.className = "msg err"; msg.textContent = "Weekly goal must be 1 to 80 hours."; return; }
+    if (!(tg >= 472 && tg <= 528)) { msg.className = "msg err"; msg.textContent = "Target must be between 472 and 528."; return; }
+    try { await writeSingle("meta/settings", { weeklyGoal: wg, target: tg }); msg.textContent = "Goals saved."; }
+    catch (e) { msg.className = "msg err"; msg.textContent = saveErr(e); }
+  });
+
+  // ---------- tabs ----------
+  const TABS = ["overview", "plan", "log", "scores", "topics"];
+  function showTab(t) {
+    if (!TABS.includes(t)) t = "overview";
+    for (const n of TABS) { $("panel-" + n).hidden = n !== t; $("tab-" + n).setAttribute("aria-selected", String(n === t)); }
+    try { localStorage.setItem(LS + "-tab", t); } catch (e) {}
+  }
+  document.querySelectorAll(".tab").forEach(b => b.addEventListener("click", () => showTab(b.dataset.tab)));
+  let startTab = (location.hash || "").slice(1);
+  if (!startTab) { try { startTab = localStorage.getItem(LS + "-tab") || ""; } catch (e) {} }
+  showTab(startTab);
+
+  render();
+  setNote(state.sessions.length ? "Showing your last saved data while connecting…" : "Connecting…");
+
+  // ---------- sign-in (Vercel build) ----------
+  async function onAuth(session) {
+    const was = sbUser && sbUser.id;
+    sbUser = session ? session.user : null;
+    $("authCard").hidden = !!sbUser;
+    $("signOut").hidden = !sbUser;
+    if (!sbUser) {
+      if (was) { state = { sessions: [], exams: [], topics: {}, plan: {}, settings: { weeklyGoal: 15, target: 515 } }; cache(); render(); }
+      setNote(savedText()); return;
+    }
+    setNote("Loading your study log…");
+    try { await sbLoad(); setNote(savedText()); }
+    catch (e) { setNote("Couldn't load your saved data. Check your connection and reopen the app."); }
+  }
+  $("authForm").addEventListener("submit", async ev => {
+    ev.preventDefault();
+    const msg = $("authMsg"); msg.className = "msg"; msg.textContent = "Signing in…";
+    const { data, error } = await sb.auth.signInWithPassword({ email: $("authEmail").value.trim(), password: $("authPass").value });
+    if (error) {
+      msg.className = "msg err";
+      msg.textContent = /confirm/i.test(error.message) ? "Confirm your email first: open the link Supabase sent you, then sign in here."
+        : error.status === 400 ? "That email and password didn't match. Try again."
+        : "Couldn't reach the sync service. Check your connection and try again.";
+      return;
+    }
+    msg.textContent = ""; $("authPass").value = "";
+    await onAuth(data.session);
+  });
+  $("authCreate").addEventListener("click", async () => {
+    const msg = $("authMsg"); msg.className = "msg";
+    const email = $("authEmail").value.trim(), password = $("authPass").value;
+    if (!email || password.length < 8) { msg.className = "msg err"; msg.textContent = "Enter your email and a password of at least 8 characters."; return; }
+    msg.textContent = "Creating your account…";
+    const { data, error } = await sb.auth.signUp({ email, password });
+    if (error) { msg.className = "msg err"; msg.textContent = error.message; return; }
+    if (data.session) { msg.textContent = ""; await onAuth(data.session); }
+    else msg.textContent = "Account created. Open the confirmation email, then come back and sign in.";
+  });
+  $("signOut").addEventListener("click", async () => { await sb.auth.signOut(); await onAuth(null); });
+
+  // Day rolls over while the page stays open
+  let lastDay = todayKey();
+  setInterval(() => { if (todayKey() !== lastDay) { lastDay = todayKey(); render(); } }, 60000);
+
+  // ---------- data connection ----------
+  (async () => {
+    if (SB_CONF) {
+      if (!window.supabase) { setNote("Couldn't reach the sync service. Showing your last saved data; reconnect to make changes."); return; }
+      sb = window.supabase.createClient(SB_CONF.url, SB_CONF.anonKey, { auth: { persistSession: true, autoRefreshToken: true } });
+      const { data } = await sb.auth.getSession();
+      await onAuth(data.session);
+      // Don't await Supabase calls inside its own auth callback
+      sb.auth.onAuthStateChange((_ev, s) => { if ((s ? s.user.id : null) !== (sbUser ? sbUser.id : null)) setTimeout(() => onAuth(s), 0); });
+      document.addEventListener("visibilitychange", () => { if (!document.hidden && sbUser) sbLoad().then(() => setNote(savedText())).catch(() => {}); });
+      return;
+    }
+    try { db = window.claude && window.claude.use ? await window.claude.use("db") : null; } catch (e) { db = null; }
+    if (!db) { setNote(savedText()); return; }
+    const onErr = e => setNote(e && e.code === "revoked" ? "Saving is no longer available on this page. Reload to try again." : "Lost the connection to your saved data. Reload the page to reconnect.");
+    const listen = coll => db.collection(coll).onSnapshot(snap => {
+      state[coll] = snap.docs.map(d => ({ ...d.data(), id: d.id }));
+      cache(); render(); setNote(savedText());
+    }, onErr);
+    listen("sessions"); listen("exams");
+    db.doc("meta/settings").onSnapshot(s => { if (s.exists) { state.settings = { ...state.settings, ...s.data() }; cache(); render(); } }, onErr);
+    db.doc("meta/topics").onSnapshot(s => {
+      if (topicDirty || topicWriting) return;
+      if (s.exists) { state.topics = { ...(s.data().status || {}) }; cache(); renderTopics(); }
+    }, onErr);
+    db.doc("meta/plan").onSnapshot(s => {
+      if (planDirty || planWriting) return;
+      if (s.exists) { state.plan = { ...(s.data().done || {}) }; cache(); renderPlan(); }
+    }, onErr);
+  })();
+})();
+</script>
+</body>
+</html>
