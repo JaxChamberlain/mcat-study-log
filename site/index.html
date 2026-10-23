@@ -286,6 +286,8 @@ textarea { resize: vertical; min-height: 60px; }
         <div><b>UWorld QBank: a third now, the rest timed later</b><span class="hint">Content review uses about a third of each unit, in tutor mode, with "unused" selected. From late January it's timed mixed blocks of 30, finished by April 30. That covers about 1,750 of your 2,545 science questions. The AAMC packs matter more than the remainder.</span></div>
         <div><b>CARS most days</b><span class="hint">Use the UWorld CARS QBank for daily passages through January. Save the AAMC CARS Diagnostic and both CARS packs for February. Review every answer choice.</span></div>
         <div><b>Anki every day</b><span class="hint">15 to 30 minutes. Make cards from every QBank question you miss. Lighter weeks are for clearing the backlog.</span></div>
+        <div><b>One rest day a week</b><span class="hint">Anki only. Each week's hours are spread over the other six days.</span></div>
+        <div><b>Full-lengths like test day</b><span class="hint">Start at 8 AM, take only the official breaks, and eat the snacks you'll bring. Review takes as long as the test.</span></div>
       </div>
     </div>
     <div class="weeks" id="weeks"></div>
@@ -367,8 +369,8 @@ textarea { resize: vertical; min-height: 60px; }
   const SEC = Object.fromEntries(SECTIONS.map(s => [s.id, s]));
   const PHASES = [
     { name: "Content review", from: "2026-10-24", to: "2027-01-17", mix: "22%", tip: "Work through every UWorld book once, with each unit's QBank set and daily Anki." },
-    { name: "Practice", from: "2027-01-18", to: "2027-03-07", mix: "40%", tip: "Timed mixed QBank blocks, CARS most days, and a full-length every other week." },
-    { name: "Full-lengths", from: "2027-03-08", to: "2027-05-02", mix: "60%", tip: "AAMC full-lengths every other Saturday, with a lighter stretch around cheer nationals (Apr 6–11)." },
+    { name: "Practice", from: "2027-01-18", to: "2027-02-28", mix: "40%", tip: "Timed mixed QBank blocks, CARS most days, and a full-length every other week." },
+    { name: "Full-lengths", from: "2027-03-01", to: "2027-05-02", mix: "60%", tip: "AAMC FL 3 and 4 in March, a practice block and a lighter week before cheer nationals (Apr 6–11), then FL 5 and 6 in April." },
     { name: "Taper", from: "2027-05-03", to: "2027-05-07", mix: "80%", tip: "Light review, sleep schedule, logistics. Rest the day before." },
   ];
   const EVENTS = [{ name: "Cheer nationals", from: "2027-04-06", to: "2027-04-11" }];
@@ -385,6 +387,7 @@ textarea { resize: vertical; min-height: 60px; }
   const PLAN = [
     { from: "2026-10-24", to: "2026-10-25", hours: 3, title: "Kickoff weekend", items: [
       ["fl", "Setup", "Open the QBank, build one 10-question tutor block to learn the screens, and set up Anki"],
+      ["fl", "Setup", "Pick your weekly rest day (Anki only). A competition or travel day works well"],
       ["bb", "Read", "Biochemistry Ch 2: Peptides and Proteins (Ch 1 is already done)"],
       ["cars", "Read", "CARS Ch 3: How to Study for CARS"]] },
     { from: "2026-10-26", to: "2026-11-01", hours: 8, title: "Proteins", items: [
@@ -398,6 +401,7 @@ textarea { resize: vertical; min-height: 60px; }
       ["bb", "Read", "Biochemistry Ch 4–5: Enzyme Activity, Enzyme Kinetics"],
       ["ps", "Read", "Behavioral Sciences Ch 6–7: Human Physiological Development, Studying the Brain"],
       ["ps", "QBank", "Behavioral Sciences Unit 2 QBank: both questions"],
+      ["fl", "Exam", "Optional: a free timed half-length diagnostic from a test-prep company, to spot weak areas early"],
       ["cars", "Read", "CARS Ch 5–6: Foundations of Comprehension, Reasoning Within the Text"],
       ["cars", "CARS", "3 UWorld CARS passages, untimed"]] },
     { from: "2026-11-09", to: "2026-11-15", hours: 12, title: "Enzyme regulation and atoms", items: [
@@ -425,6 +429,7 @@ textarea { resize: vertical; min-height: 60px; }
     { from: "2026-11-30", to: "2026-12-06", hours: 18, title: "Finish biochem", items: [
       ["bb", "Read", "Biochemistry Ch 12–14: Aerobic Respiration, Noncarbohydrate Metabolism, Biomolecule Purification"],
       ["bb", "QBank", "Biochemistry QBank: 45 of 135 from Unit 4, all 7 from Unit 5"],
+      ["fl", "QBank", "Mixed review: 20 timed UWorld questions from units you've already finished"],
       ["cp", "Read", "General Chemistry Ch 5–6: Chemical Equilibrium, Gas Laws"],
       ["cp", "QBank", "General Chemistry Unit 3 QBank: 40 of 122 questions"],
       ["ps", "Read", "Behavioral Sciences Ch 19–22: Memory, Cognition, Problem-Solving, Language"],
@@ -433,6 +438,7 @@ textarea { resize: vertical; min-height: 60px; }
     { from: "2026-12-07", to: "2026-12-13", hours: 20, title: "Finish gen chem, start bio and physics", items: [
       ["cp", "Read", "General Chemistry Ch 7–9: Solutions, Acid-Base Chemistry, Redox and Electrochemistry"],
       ["cp", "QBank", "General Chemistry Unit 4 QBank: 45 of 141 questions"],
+      ["fl", "QBank", "Mixed review: 20 timed UWorld questions from units you've already finished"],
       ["bb", "Read", "Biology Ch 1–2: DNA Structure, Synthesis, and Repair; Gene Expression"],
       ["bb", "QBank", "Biology Unit 1 QBank: 25 of 70 questions"],
       ["cp", "Read", "Physics Ch 1: Motion, Force, and Energy"],
@@ -442,6 +448,7 @@ textarea { resize: vertical; min-height: 60px; }
     { from: "2026-12-14", to: "2026-12-20", hours: 22, title: "Cells and start orgo", items: [
       ["bb", "Read", "Biology Ch 3–6: Designing Experiments, Biotechnology, Eukaryotic Cells, Prokaryotes and Viruses"],
       ["bb", "QBank", "Biology QBank: the 1 Unit 2 question, 25 of 77 from Unit 3"],
+      ["fl", "QBank", "Mixed review: 20 timed UWorld questions from units you've already finished"],
       ["cp", "Read", "Organic Chemistry Ch 1–3: Chemical Bonding, Structure of Organic Molecules, Isomers"],
       ["cp", "Read", "Physics Ch 2: Fluid Dynamics"],
       ["cp", "QBank", "Physics Unit 2 QBank: 25 of 74 questions"],
@@ -453,12 +460,14 @@ textarea { resize: vertical; min-height: 60px; }
       ["bb", "QBank", "Biology Unit 4 QBank: 20 of 64 questions"],
       ["cp", "Read", "Organic Chemistry Ch 4–5: Organic Nomenclature, Overview of Organic Reactions"],
       ["cp", "QBank", "Organic Chemistry Unit 1 QBank: 30 of 89 questions"],
+      ["fl", "QBank", "Mixed review: 20 timed UWorld questions from units you've already finished"],
       ["ps", "Read", "Behavioral Sciences Ch 29–31: Psychological Disorders, their Biological Underpinnings, Treatment"],
       ["ps", "QBank", "Behavioral Sciences Unit 6 QBank: all 5 questions"],
       ["cars", "CARS", "3 UWorld CARS passages"]] },
     { from: "2026-12-28", to: "2027-01-03", hours: 24, title: "Reproduction and systems", items: [
       ["bb", "Read", "Biology Ch 9–12: Reproductive Systems; Pregnancy and Development; Endocrine; Nervous"],
       ["bb", "QBank", "Biology QBank: 12 of 35 from Unit 5, 30 of 89 from Unit 6"],
+      ["fl", "QBank", "Mixed review: 20 timed UWorld questions from units you've already finished"],
       ["cp", "Read", "Organic Chemistry Ch 6–8: Hydrocarbons; Alkyl Halides, Ethers, Sulfur Groups; Alcohols"],
       ["cp", "Read", "Physics Ch 3: Electricity and Magnetism"],
       ["cp", "QBank", "Physics Unit 3 QBank: 30 of 88 questions"],
@@ -468,6 +477,7 @@ textarea { resize: vertical; min-height: 60px; }
     { from: "2027-01-04", to: "2027-01-10", hours: 26, title: "Organ systems I", items: [
       ["bb", "Read", "Biology Ch 13–16: Circulation, Respiration, Digestion, Excretion"],
       ["bb", "QBank", "Biology QBank: 15 of 49 from Unit 7, 20 of 57 from Unit 8"],
+      ["fl", "QBank", "Mixed review: 20 timed UWorld questions from units you've already finished"],
       ["cp", "Read", "Organic Chemistry Ch 9–11: Aldehydes and Ketones, Carboxylic Acids, Carboxylic Acid Derivatives"],
       ["cp", "Read", "Physics Ch 4: Waves, Sound, and Light"],
       ["cp", "QBank", "Physics Unit 4 QBank: 40 of 117 questions"],
@@ -477,6 +487,7 @@ textarea { resize: vertical; min-height: 60px; }
     { from: "2027-01-11", to: "2027-01-17", hours: 26, title: "Finish the books", items: [
       ["bb", "Read", "Biology Ch 17–20: Muscular, Skeletal, Skin, Immune"],
       ["bb", "QBank", "Biology QBank: 15 of 44 from Unit 9, 15 of 40 from Unit 10"],
+      ["fl", "QBank", "Mixed review: 20 timed UWorld questions from units you've already finished"],
       ["cp", "Read", "Organic Chemistry Ch 12–14: Amines and Amides, Separation and Purification, Spectroscopy"],
       ["cp", "QBank", "Organic Chemistry QBank: 50 of 150 from Unit 2, 25 of 80 from Unit 3"],
       ["cp", "Read", "Physics Ch 5: Thermodynamics and Gases"],
@@ -485,66 +496,71 @@ textarea { resize: vertical; min-height: 60px; }
       ["ps", "QBank", "Behavioral Sciences Unit 9 QBank: 20 of 52 questions"],
       ["cars", "CARS", "4 UWorld CARS passages, timed"]] },
 
-    // Practice phase: AAMC Sample + FL 1–6, AAMC question packs early, Section Banks late
+    // Practice phase: AAMC Sample + FL 1–6 (FL 1–4 before nationals), packs early, Section Banks late
     { from: "2027-01-18", to: "2027-01-24", hours: 20, title: "Catch-up and sample test", items: [
       ["fl", "Review", "Finish any chapter or unit QBank set that slipped"],
       ["fl", "Review", "Redo every UWorld QBank question you've missed so far"],
       ["cars", "AAMC", "AAMC CARS Diagnostic Tool: first half"],
-      ["fl", "Exam", "Saturday Jan 23: AAMC Sample Test (unscored), full-length and timed"]] },
+      ["fl", "Exam", "Saturday Jan 23: AAMC Sample Test (unscored), under test-day conditions"]] },
     { from: "2027-01-25", to: "2027-01-31", hours: 20, title: "Review the sample test", items: [
       ["fl", "Review", "Review the Sample Test, every question, right and wrong"],
       ["fl", "Review", "Write your weak-topic list from the Sample Test and the UWorld performance page"],
       ["fl", "AAMC", "AAMC 150 Independent Questions, untimed, in 3 sittings"],
       ["cars", "AAMC", "AAMC CARS Diagnostic Tool: second half, and read its CARS tips"],
       ["fl", "QBank", "UWorld timed: 3 blocks of 30, mixed sections"]] },
-    { from: "2027-02-01", to: "2027-02-07", hours: 22, title: "Bio and CARS packs", items: [
+    { from: "2027-02-01", to: "2027-02-07", hours: 24, title: "AAMC FL 1", items: [
       ["bb", "AAMC", "AAMC Biology Question Pack (120 questions)"],
       ["cars", "AAMC", "AAMC CARS Question Pack: first half"],
-      ["fl", "QBank", "UWorld timed: 3 blocks of 30, mixed sections"],
-      ["fl", "Read", "Reread the book chapters for 2 weak topics"]] },
-    { from: "2027-02-08", to: "2027-02-14", hours: 24, title: "AAMC FL 1", items: [
+      ["fl", "QBank", "UWorld timed: 1 block of 30, mixed sections"],
+      ["fl", "Exam", "Saturday Feb 6: AAMC Full-length 1, under test-day conditions"],
+      ["fl", "Review", "Sunday: start reviewing AAMC FL 1"]] },
+    { from: "2027-02-08", to: "2027-02-14", hours: 24, title: "Chem pack and FL 1 review", items: [
+      ["fl", "Review", "Finish reviewing AAMC FL 1"],
       ["cp", "AAMC", "AAMC Chemistry Question Pack (120 questions)"],
       ["cars", "AAMC", "AAMC CARS Question Pack: second half"],
-      ["fl", "Exam", "Saturday Feb 13: AAMC Full-length 1"],
-      ["fl", "Review", "Sunday–Monday: review AAMC FL 1 completely"]] },
-    { from: "2027-02-15", to: "2027-02-21", hours: 24, title: "Physics and bio packs", items: [
+      ["fl", "QBank", "UWorld timed: 3 blocks of 30, mixed sections"],
+      ["fl", "Read", "Reread the chapters behind your FL 1 misses"]] },
+    { from: "2027-02-15", to: "2027-02-21", hours: 24, title: "AAMC FL 2", items: [
       ["cp", "AAMC", "AAMC Physics Question Pack (120 questions)"],
-      ["bb", "AAMC", "AAMC Biology Question Pack II (120 questions)"],
-      ["fl", "QBank", "UWorld timed: 2 blocks of 30, mixed sections"],
-      ["fl", "Read", "Reread the chapters behind your FL 1 misses"],
-      ["cars", "CARS", "5 UWorld CARS passages, timed"]] },
-    { from: "2027-02-22", to: "2027-02-28", hours: 25, title: "AAMC FL 2", items: [
       ["cars", "AAMC", "AAMC CARS Question Pack II: first half"],
-      ["fl", "QBank", "UWorld timed: 2 blocks of 30, mixed sections"],
-      ["fl", "Exam", "Saturday Feb 27: AAMC Full-length 2"],
-      ["fl", "Review", "Sunday–Monday: review AAMC FL 2 completely"]] },
-    { from: "2027-03-01", to: "2027-03-07", hours: 25, title: "Section Bank begins", items: [
-      ["fl", "AAMC", "AAMC Section Bank: first 100 questions, timed by passage"],
+      ["fl", "QBank", "UWorld timed: 1 block of 30, mixed sections"],
+      ["fl", "Exam", "Saturday Feb 20: AAMC Full-length 2, under test-day conditions"],
+      ["fl", "Review", "Sunday: start reviewing AAMC FL 2"]] },
+    { from: "2027-02-22", to: "2027-02-28", hours: 25, title: "Bio pack II and FL 2 review", items: [
+      ["fl", "Review", "Finish reviewing AAMC FL 2"],
+      ["bb", "AAMC", "AAMC Biology Question Pack II (120 questions)"],
       ["cars", "AAMC", "AAMC CARS Question Pack II: second half"],
-      ["fl", "QBank", "UWorld timed: 4 blocks of 30, mixed sections"],
+      ["fl", "QBank", "UWorld timed: 3 blocks of 30, mixed sections"],
       ["fl", "Read", "Reread the chapters behind your FL 2 misses"]] },
 
     // Full-length phase
-    { from: "2027-03-08", to: "2027-03-14", hours: 25, title: "AAMC FL 3", items: [
+    { from: "2027-03-01", to: "2027-03-07", hours: 25, title: "AAMC FL 3", items: [
+      ["fl", "AAMC", "AAMC Section Bank: first 100 questions, timed by passage"],
+      ["fl", "QBank", "UWorld timed: 1 block of 30, mixed sections"],
+      ["cars", "CARS", "3 UWorld CARS passages, timed"],
+      ["fl", "Exam", "Saturday Mar 6: AAMC Full-length 3, under test-day conditions"],
+      ["fl", "Review", "Sunday: start reviewing AAMC FL 3"]] },
+    { from: "2027-03-08", to: "2027-03-14", hours: 25, title: "Checkpoint week", items: [
+      ["fl", "Review", "Finish reviewing AAMC FL 3"],
+      ["fl", "Review", "Checkpoint: average FL 1–3. If you're 5+ points under your target, look at moving your test date now, before AAMC's rescheduling deadlines"],
       ["fl", "AAMC", "AAMC Section Bank: next 100 questions"],
-      ["fl", "Exam", "Saturday Mar 13: AAMC Full-length 3"],
-      ["fl", "QBank", "UWorld timed: 1 block of 30, mixed sections"],
-      ["fl", "Review", "Sunday–Monday: review AAMC FL 3 completely"],
+      ["fl", "QBank", "UWorld timed: 3 blocks of 30, mixed sections"],
       ["cars", "CARS", "5 UWorld CARS passages, timed"]] },
-    { from: "2027-03-15", to: "2027-03-21", hours: 25, title: "Finish Section Bank", items: [
+    { from: "2027-03-15", to: "2027-03-21", hours: 24, title: "AAMC FL 4", items: [
       ["fl", "AAMC", "AAMC Section Bank: last 100 questions"],
-      ["fl", "QBank", "UWorld timed: 4 blocks of 30, mixed sections"],
-      ["fl", "Read", "Reread the chapters behind your FL 3 and Section Bank misses"],
-      ["cars", "CARS", "5 UWorld CARS passages, timed"]] },
-    { from: "2027-03-22", to: "2027-03-28", hours: 22, title: "AAMC FL 4", items: [
-      ["fl", "AAMC", "AAMC Section Bank II: first 50 questions"],
       ["fl", "QBank", "UWorld timed: 1 block of 30, mixed sections"],
-      ["fl", "Exam", "Saturday Mar 27: AAMC Full-length 4"],
+      ["cars", "CARS", "3 UWorld CARS passages, timed"],
+      ["fl", "Exam", "Saturday Mar 20: AAMC Full-length 4, under test-day conditions"],
       ["fl", "Review", "Sunday: start reviewing AAMC FL 4"]] },
-    { from: "2027-03-29", to: "2027-04-04", hours: 15, title: "Before nationals", light: true, items: [
+    { from: "2027-03-22", to: "2027-03-28", hours: 22, title: "Practice block", items: [
       ["fl", "Review", "Finish reviewing AAMC FL 4"],
-      ["fl", "QBank", "UWorld timed: 2 blocks of 30, mixed sections"],
+      ["fl", "AAMC", "AAMC Section Bank II: first 100 questions"],
+      ["fl", "QBank", "UWorld timed: 4 blocks of 30, mixed sections"],
+      ["fl", "Read", "Reread the chapters behind your FL 3, FL 4, and Section Bank misses"],
+      ["cars", "CARS", "5 UWorld CARS passages, timed"]] },
+    { from: "2027-03-29", to: "2027-04-04", hours: 15, title: "Before nationals", light: true, items: [
       ["fl", "AAMC", "AAMC Section Bank II: next 50 questions"],
+      ["fl", "QBank", "UWorld timed: 2 blocks of 30, mixed sections"],
       ["cars", "CARS", "4 UWorld CARS passages"],
       ["fl", "Anki", "Get your Anki backlog to zero before you travel"]] },
     { from: "2027-04-05", to: "2027-04-11", hours: 4, title: "Cheer nationals", light: true, event: "Nationals Apr 6–11", items: [
@@ -553,15 +569,14 @@ textarea { resize: vertical; min-height: 60px; }
       ["fl", "Rest", "Nothing else. Compete and rest"]] },
     { from: "2027-04-12", to: "2027-04-18", hours: 22, title: "AAMC FL 5", items: [
       ["fl", "Anki", "Monday–Tuesday: easy restart, clear the Anki backlog"],
-      ["fl", "AAMC", "AAMC Section Bank II: next 100 questions"],
-      ["fl", "QBank", "UWorld timed: 2 blocks of 30, mixed sections"],
-      ["fl", "Exam", "Saturday Apr 17: AAMC Full-length 5"],
-      ["fl", "Review", "Sunday: review AAMC FL 5"]] },
+      ["fl", "AAMC", "AAMC Section Bank II: next 75 questions"],
+      ["fl", "Exam", "Saturday Apr 17: AAMC Full-length 5, under test-day conditions"],
+      ["fl", "Review", "Sunday: start reviewing AAMC FL 5"]] },
     { from: "2027-04-19", to: "2027-04-25", hours: 25, title: "AAMC FL 6", items: [
       ["fl", "Review", "Finish reviewing AAMC FL 5"],
-      ["fl", "AAMC", "AAMC Section Bank II: last 100 questions"],
+      ["fl", "AAMC", "AAMC Section Bank II: last 75 questions"],
       ["fl", "QBank", "UWorld timed: 2 blocks of 30, mixed sections"],
-      ["fl", "Exam", "Saturday Apr 24: AAMC Full-length 6, your last full-length"],
+      ["fl", "Exam", "Saturday Apr 24: AAMC Full-length 6, your last full-length, under test-day conditions"],
       ["fl", "Review", "Sunday: review AAMC FL 6"]] },
     { from: "2027-04-26", to: "2027-05-02", hours: 20, title: "Last full week", items: [
       ["fl", "QBank", "UWorld: 4 last blocks of 30 on your weakest topics, done by Friday, April 30"],
